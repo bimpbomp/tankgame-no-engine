@@ -6,11 +6,11 @@ import android.util.Log;
 // Loop taken from: https://dewitters.com/dewitters-gameloop/
 public class Loop implements Runnable {
     private GameSurface gameSurface;
+    private InputManager inputManager;
     private boolean gameIsRunning;
 
+    private BoundingBox levelBoundary;
     public GameObject gameObject;
-    private int xDirection = -1;
-    private int yDirection = -1;
 
     public Loop(GameSurface gameSurface) {
         this.gameSurface = gameSurface;
@@ -26,8 +26,6 @@ public class Loop implements Runnable {
         int loops;
         float interpolation;
 
-        initialiseGame();
-
         Log.d("Loading", "Game loop starting");
         gameIsRunning = true;
         while (gameIsRunning) {
@@ -42,53 +40,35 @@ public class Loop implements Runnable {
 
             interpolation = (float) (System.currentTimeMillis() + SKIP_TICKS - nextGameTick) / (float) SKIP_TICKS;
 
-            // use interpolation like this: view_position = position + (speed * interpolation)
             this.gameSurface.draw(interpolation);
         }
     }
 
     public void initialiseGame(){
+        inputManager = new InputManager();
         gameObject = new GameObject(0, 0, 100, 100, Color.GREEN);
+        levelBoundary = new BoundingBox(0, 0, gameSurface.getWidth(), gameSurface.getHeight());
     }
 
     public void updateGame(){
-        int screenWidth = gameSurface.width;
-        int newX = gameObject.getxPos() + (20 * xDirection);
-        boolean xBoundaryReached = false;
+        Point inputUnitVector = VectorUtils.getUnitVector(inputManager.pollDpadInput());
+        Point gameObjectVelocity = new Point(
+                inputUnitVector.getX() * gameObject.getMaxSpeed(),
+                inputUnitVector.getY() * gameObject.getMaxSpeed()
+        );
 
-        // check if new position means object leaves screen x boundary
-        if (newX > screenWidth - gameObject.getWidth()){
-            newX = screenWidth - gameObject.getWidth();
-            gameObject.setColor(Color.RED);
-            xDirection *= -1;
-            xBoundaryReached = true;
-        } else if (newX < 0) {
-            newX = 0;
-            gameObject.setColor(Color.GREEN);
-            xDirection *= -1;
-            xBoundaryReached = true;
-        }
-        gameObject.setxPos(newX);
+        gameObject.setVelocity(gameObjectVelocity);
+        gameObject.setXPos(gameObject.getXPos() + gameObjectVelocity.getX());
+        gameObject.setYPos(gameObject.getYPos() + gameObjectVelocity.getY());
 
-        // move the y position if x boundary hit
-        if (xBoundaryReached){
-            int screenHeight = gameSurface.height;
-            int newY = gameObject.getyPos() + (screenHeight / 4 * yDirection);
-
-            // check if new position means object leaves screen y boundary
-            if (newY > screenHeight - gameObject.getHeight()){
-                newY = screenHeight - gameObject.getHeight();
-                yDirection *= -1;
-            } else if (newY <= 0){
-                newY = 0;
-                yDirection *= -1;
-            }
-
-            gameObject.setyPos(newY);
-        }
+        PhysicsManager.applyPhysics(gameObject, levelBoundary);
     }
 
     public void setGameIsRunning(boolean isRunning){
         this.gameIsRunning = isRunning;
+    }
+
+    public InputManager getInputManager() {
+        return inputManager;
     }
 }

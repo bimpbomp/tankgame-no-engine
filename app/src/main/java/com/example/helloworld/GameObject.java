@@ -1,25 +1,28 @@
 package com.example.helloworld;
 
 public class GameObject {
-    private int xPos;
-    private int yPos;
+    private float xPos;
+    private float yPos;
     private int width;
     private int height;
     private int color;
+    private Point velocity;
+    private final float maxSpeed = 50f;
 
-    public GameObject(int xPos, int yPos, int width, int height, int color) {
+    public GameObject(float xPos, float yPos, int width, int height, int color) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.width = width;
         this.height = height;
         this.color = color;
+        this.velocity = new Point(0,0);
     }
 
-    public int getxPos() {
+    public float getXPos() {
         return xPos;
     }
 
-    public int getyPos() {
+    public float getYPos() {
         return yPos;
     }
 
@@ -35,15 +38,28 @@ public class GameObject {
         return color;
     }
 
-    public void setxPos(int xPos) {
+    public Point getVelocity() {
+        return velocity;
+    }
+
+    public float getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setVelocity(Point velocity) {
+        this.velocity = velocity;
+    }
+
+    public void setXPos(float xPos) {
         this.xPos = xPos;
     }
 
-    public void setyPos(int yPos) {
+    public void setYPos(float yPos) {
         this.yPos = yPos;
     }
 
     public void setColor(int color) {
         this.color = color;
     }
+
 }

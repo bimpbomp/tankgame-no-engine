@@ -2,7 +2,6 @@ package com.example.helloworld;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.WindowManager;
