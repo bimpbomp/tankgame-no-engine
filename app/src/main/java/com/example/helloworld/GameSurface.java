@@ -49,17 +49,25 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
             // draw player
             GameObject gO = loop.gameObject;
-            float viewXPos = gO.getXPos() - viewport.getLeft() - gO.getWidth()/2f;
-            float viewYPos = gO.getYPos() - viewport.getTop() - gO.getHeight()/2f;
             paint.setColor(gO.getColor());
-            canvas.drawRect(viewXPos, viewYPos, viewXPos + gO.getWidth(), viewYPos + gO.getHeight(), paint);
+            canvas.drawRect(gO.getXPos() - gO.getWidth()/2f - viewport.getLeft(),
+                    gO.getYPos() - gO.getHeight()/2f - viewport.getTop(),
+                    gO.getXPos() + gO.getWidth()/2f - viewport.getLeft(),
+                    gO.getYPos() + gO.getHeight()/2f - viewport.getTop(),
+                    paint);
 
             // draw second object
             GameObject gameObject2 = loop.gameObject2;
             float interpolatedXPosition = gameObject2.getXPos() - (gO.getVelocity().getX() * interpolationDelta);
             float interpolatedYPosition = gameObject2.getYPos() - (gO.getVelocity().getY() * interpolationDelta);
             paint.setColor(gameObject2.getColor());
-            canvas.drawRect(interpolatedXPosition - viewport.getLeft(), interpolatedYPosition - viewport.getTop(), interpolatedXPosition + gameObject2.getWidth() - viewport.getLeft(), interpolatedYPosition + gameObject2.getHeight() - viewport.getTop(), paint);
+            canvas.drawRect(
+                    interpolatedXPosition - gameObject2.getWidth()/2f - viewport.getLeft(),
+                    interpolatedYPosition - gameObject2.getHeight()/2f - viewport.getTop(),
+                    interpolatedXPosition + gameObject2.getWidth()/2f - viewport.getLeft(),
+                    interpolatedYPosition + gameObject2.getHeight()/2f - viewport.getTop(),
+                    paint
+            );
 
             // Draw UI
             loop.getInputManager().draw(canvas);
