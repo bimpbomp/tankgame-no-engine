@@ -18,6 +18,8 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     Loop loop;
     Thread loopThread;
 
+    BoundingBox viewport;
+
     public GameSurface(Context context) {
         super(context);
         getHolder().addCallback(this);
@@ -28,6 +30,16 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void draw(float interpolationDelta){
+        float playerX = loop.gameObject.getXPos();
+        float playerY = loop.gameObject.getYPos();
+
+        viewport = new BoundingBox(
+                playerX - width/2f,
+                playerY - height/2f,
+                playerX + width/2f,
+                playerY + height/2f
+        );
+
         Canvas canvas = getHolder().lockCanvas();
 
         if (canvas != null){
@@ -35,12 +47,19 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
             // draw background color
             canvas.drawColor(Color.DKGRAY);
 
+            // draw player
             GameObject gO = loop.gameObject;
+            float viewXPos = gO.getXPos() - viewport.getLeft() - gO.getWidth()/2f;
+            float viewYPos = gO.getYPos() - viewport.getTop() - gO.getHeight()/2f;
             paint.setColor(gO.getColor());
-            paint.setStrokeWidth(3);
-            float interpolatedXPosition = gO.getXPos() + (gO.getVelocity().getX() * interpolationDelta);
-            float interpolatedYPosition = gO.getYPos() + (gO.getVelocity().getY() * interpolationDelta);
-            canvas.drawRect(interpolatedXPosition, interpolatedYPosition, interpolatedXPosition + gO.getWidth(), interpolatedYPosition + gO.getHeight(), paint);
+            canvas.drawRect(viewXPos, viewYPos, viewXPos + gO.getWidth(), viewYPos + gO.getHeight(), paint);
+
+            // draw second object
+            GameObject gameObject2 = loop.gameObject2;
+            float interpolatedXPosition = gameObject2.getXPos() - (gO.getVelocity().getX() * interpolationDelta);
+            float interpolatedYPosition = gameObject2.getYPos() - (gO.getVelocity().getY() * interpolationDelta);
+            paint.setColor(gameObject2.getColor());
+            canvas.drawRect(interpolatedXPosition - viewport.getLeft(), interpolatedYPosition - viewport.getTop(), interpolatedXPosition + gameObject2.getWidth() - viewport.getLeft(), interpolatedYPosition + gameObject2.getHeight() - viewport.getTop(), paint);
 
             // Draw UI
             loop.getInputManager().draw(canvas);

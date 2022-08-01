@@ -11,6 +11,7 @@ public class Loop implements Runnable {
 
     private BoundingBox levelBoundary;
     public GameObject gameObject;
+    public GameObject gameObject2;
 
     public Loop(GameSurface gameSurface) {
         this.gameSurface = gameSurface;
@@ -46,7 +47,8 @@ public class Loop implements Runnable {
 
     public void initialiseGame(){
         inputManager = new InputManager();
-        gameObject = new GameObject(0, 0, 100, 100, Color.GREEN);
+        gameObject = new GameObject(100, 100, 100, 100, Color.GREEN);
+        gameObject2 = new GameObject(0, 0, 100, 100, Color.RED);
         levelBoundary = new BoundingBox(0, 0, gameSurface.getWidth(), gameSurface.getHeight());
     }
 
@@ -61,7 +63,7 @@ public class Loop implements Runnable {
         gameObject.setXPos(gameObject.getXPos() + gameObjectVelocity.getX());
         gameObject.setYPos(gameObject.getYPos() + gameObjectVelocity.getY());
 
-        PhysicsManager.applyPhysics(gameObject, levelBoundary);
+        //PhysicsManager.applyPhysics(gameObject, levelBoundary);
     }
 
     public void setGameIsRunning(boolean isRunning){
