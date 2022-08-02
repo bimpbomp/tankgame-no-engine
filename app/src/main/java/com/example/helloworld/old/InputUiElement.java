@@ -1,7 +1,6 @@
-package com.example.helloworld;
+package com.example.helloworld.old;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 
 public interface InputUiElement {
     boolean containsPoint(Point eventPosition);

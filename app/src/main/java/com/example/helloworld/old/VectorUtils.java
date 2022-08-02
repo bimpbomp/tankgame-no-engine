@@ -1,4 +1,4 @@
-package com.example.helloworld;
+package com.example.helloworld.old;
 
 public class VectorUtils {
     public static float calculateDistance(Point p1, Point p2){

@@ -1,9 +1,8 @@
-package com.example.helloworld;
+package com.example.helloworld.old;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.MotionEvent;
 
 public class Button implements InputUiElement {

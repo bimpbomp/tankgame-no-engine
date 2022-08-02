@@ -1,4 +1,4 @@
-package com.example.helloworld;
+package com.example.helloworld.old;
 
 public class BoundingBox {
     private float left;
