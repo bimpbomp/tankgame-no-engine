@@ -16,6 +16,10 @@ public class ComponentArray {
         topPointer = 0;
     }
 
+    public Component getData(Entity entity){
+        return componentArray[entityIntegerMap.get(entity)];
+    }
+
     public void insertData(Entity entity, Component component){
         // Put new entry at end and update the maps
         int newIndex = topPointer;
