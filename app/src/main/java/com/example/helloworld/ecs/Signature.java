@@ -1,5 +1,7 @@
 package com.example.helloworld.ecs;
 
+import androidx.annotation.NonNull;
+
 import java.util.BitSet;
 
 public class Signature {
@@ -23,5 +25,19 @@ public class Signature {
 
     public boolean matches(Signature signature){
         return sig.equals(signature.sig);
+    }
+
+    public boolean contains(Signature signature){
+        byte[] thisBytes = this.sig.toByteArray();
+        BitSet temp = BitSet.valueOf(thisBytes);
+        temp.and(signature.sig);
+
+        return temp.equals(this.sig);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return sig.toString();
     }
 }

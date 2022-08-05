@@ -12,6 +12,22 @@ public abstract class Component {
     }
 
     public int getType(){
-        return componentTypes.putIfAbsent(this.getClass().getName(), nextTypeCounter++);
+        if (componentTypes.containsKey(this.getClass().getName())){
+            return componentTypes.get(this.getClass().getName());
+        } else {
+            int type = nextTypeCounter++;
+            componentTypes.put(this.getClass().getName(), type);
+            return type;
+        }
+    }
+
+    public static int getType(Class clazz){
+        if (componentTypes.containsKey(clazz.getName())){
+            return componentTypes.get(clazz.getName());
+        } else {
+            int type = nextTypeCounter++;
+            componentTypes.put(clazz.getName(), type);
+            return type;
+        }
     }
 }

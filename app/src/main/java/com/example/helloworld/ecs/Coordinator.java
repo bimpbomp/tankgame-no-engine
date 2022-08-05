@@ -40,7 +40,12 @@ public class Coordinator {
         return componentManager.getComponent(entity, componentType);
     }
 
-    public void registerSystem(System system){
+    public Component getComponent(Entity entity, Class componentClass){
+        int componentType = Component.getType(componentClass);
+        return componentManager.getComponent(entity, componentType);
+    }
 
+    public void registerSystem(GameSystem system){
+        systemManager.registerSystem(system);
     }
 }
