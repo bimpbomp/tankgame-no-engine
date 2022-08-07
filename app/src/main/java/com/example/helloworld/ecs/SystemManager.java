@@ -25,7 +25,6 @@ public class SystemManager {
     public void entitySignatureChanged(Entity entity){
         Log.d("LOADING", "entity " + entity.id + " sig: " + entity.signature.toString());
         for (GameSystem system : systems){
-
             system.entitySignatureChanged(entity);
         }
     }

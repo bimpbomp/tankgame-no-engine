@@ -55,7 +55,6 @@ public class PhysicsSystem extends GameSystem {
 
     public void update(float delta){
         world.step(timeStep, velocityIterations, positionIterations);
-        Log.d("PHYSICS", "no. entities " + entities.size());
 
         for (Entity entity : entities){
             Transform transform = (Transform) coordinator.getComponent(entity, Transform.class);

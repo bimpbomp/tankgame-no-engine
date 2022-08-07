@@ -27,6 +27,10 @@ public class Signature {
         return sig.equals(signature.sig);
     }
 
+    public boolean get(int bit){
+        return sig.get(bit);
+    }
+
     public boolean contains(Signature signature){
         byte[] thisBytes = this.sig.toByteArray();
         BitSet temp = BitSet.valueOf(thisBytes);

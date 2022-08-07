@@ -7,6 +7,8 @@ public abstract class Component {
     private static final Map<String, Integer> componentTypes = new HashMap<>();
     private static int nextTypeCounter = 0;
 
+    public final int type = Component.getType(this.getClass());
+
     public Component(){
 
     }
@@ -30,4 +32,5 @@ public abstract class Component {
             return type;
         }
     }
+
 }

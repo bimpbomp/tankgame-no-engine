@@ -1,4 +1,4 @@
-package com.example.helloworld.old;
+package com.example.helloworld;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,6 +10,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 import com.example.helloworld.Loop;
+import com.example.helloworld.old.Point;
 
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     Context context;

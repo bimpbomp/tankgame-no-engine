@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.WindowManager;
-import com.example.helloworld.old.GameSurface;
 
 public class MainActivity extends Activity {
     PowerManager.WakeLock wakeLock;
