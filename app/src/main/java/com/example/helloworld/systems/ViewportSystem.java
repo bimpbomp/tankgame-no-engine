@@ -1,11 +1,10 @@
 package com.example.helloworld.systems;
 
-import android.util.Log;
 import com.example.helloworld.components.Transform;
 import com.example.helloworld.components.Viewport;
-import com.example.helloworld.ecs.Coordinator;
-import com.example.helloworld.ecs.Entity;
-import com.example.helloworld.ecs.GameSystem;
+import com.example.helloworld.core.ecs.Coordinator;
+import com.example.helloworld.core.ecs.Entity;
+import com.example.helloworld.core.ecs.GameSystem;
 
 public class ViewportSystem extends GameSystem {
     public ViewportSystem(Coordinator coordinator) {

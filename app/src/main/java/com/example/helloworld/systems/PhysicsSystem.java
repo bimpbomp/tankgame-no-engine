@@ -1,11 +1,10 @@
 package com.example.helloworld.systems;
 
-import android.util.Log;
 import com.example.helloworld.components.PhysicsBody;
 import com.example.helloworld.components.Transform;
-import com.example.helloworld.ecs.Coordinator;
-import com.example.helloworld.ecs.Entity;
-import com.example.helloworld.ecs.GameSystem;
+import com.example.helloworld.core.ecs.Coordinator;
+import com.example.helloworld.core.ecs.Entity;
+import com.example.helloworld.core.ecs.GameSystem;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;

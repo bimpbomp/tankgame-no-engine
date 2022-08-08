@@ -1,4 +1,4 @@
-package com.example.helloworld;
+package com.example.helloworld.core.android;
 
 import android.app.Activity;
 import android.content.Context;

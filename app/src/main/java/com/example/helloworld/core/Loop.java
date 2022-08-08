@@ -1,7 +1,8 @@
-package com.example.helloworld;
+package com.example.helloworld.core;
 
 import android.graphics.Color;
 import android.util.Log;
+import com.example.helloworld.core.android.GameSurface;
 import com.example.helloworld.components.PhysicsBody;
 import com.example.helloworld.components.Viewport;
 import com.example.helloworld.components.renderable.RenderableCircle;
@@ -9,30 +10,31 @@ import com.example.helloworld.components.renderable.RenderablePolygon;
 import com.example.helloworld.components.Transform;
 import com.example.helloworld.components.renderable.RenderableSprite;
 import com.example.helloworld.components.renderable.RenderableText;
-import com.example.helloworld.ecs.*;
-import com.example.helloworld.old.InputManager;
+import com.example.helloworld.core.android.EventLogger;
+import com.example.helloworld.core.ecs.Component;
+import com.example.helloworld.core.ecs.Coordinator;
+import com.example.helloworld.core.ecs.Entity;
+import com.example.helloworld.core.ecs.Signature;
 import com.example.helloworld.systems.PhysicsSystem;
-import com.example.helloworld.systems.RenderSystem;
+import com.example.helloworld.systems.render.PolygonFactory;
+import com.example.helloworld.systems.render.RenderSystem;
 import com.example.helloworld.systems.ViewportSystem;
 import org.jbox2d.common.Vec2;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 // Loop taken from: https://dewitters.com/dewitters-gameloop/
 public class Loop implements Runnable {
-    private InputManager inputManager;
     private Coordinator coordinator;
     private RenderSystem renderSystem;
     private PhysicsSystem physicsSystem;
     private ViewportSystem viewportSystem;
+    private EventLogger eventLogger;
     private boolean gameIsRunning;
 
     public Loop() {
     }
 
     public void initialiseGame(GameSurface gameSurface) {
-        inputManager = new InputManager();
+        eventLogger = new EventLogger();
         coordinator = new Coordinator();
 
         coordinator.registerComponentType(Component.getType(Transform.class));
@@ -113,7 +115,6 @@ public class Loop implements Runnable {
     }
 
     public void updateGame(){
-        //Point inputUnitVector = VectorUtils.getUnitVector(inputManager.pollDpadInput());
         float delta = 0.0f;
         //physicsSystem.update(delta);
         viewportSystem.update(delta);
@@ -148,9 +149,5 @@ public class Loop implements Runnable {
 
     public void setGameIsRunning(boolean isRunning){
         this.gameIsRunning = isRunning;
-    }
-
-    public InputManager getInputManager() {
-        return inputManager;
     }
 }

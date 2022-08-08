@@ -1,21 +1,19 @@
-package com.example.helloworld;
+package com.example.helloworld.core.android;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import androidx.annotation.NonNull;
-import com.example.helloworld.Loop;
+import com.example.helloworld.core.Loop;
 import com.example.helloworld.old.Point;
 
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     Context context;
     Loop loop;
     Thread loopThread;
+    private AndroidInputSystem inputSystem;
 
     public GameSurface(Context context) {
         super(context);
@@ -23,14 +21,13 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true);
 
         this.context = context;
+        this.inputSystem = new AndroidInputSystem();
     }
 
     public void startLoopThread(){
         if (this.loop == null) {
             this.loop = new Loop();
             loop.initialiseGame(this);
-            int dpadSize = 400;
-            loop.getInputManager().initialise(new Point(dpadSize / 2f, getHeight() - dpadSize / 2f), dpadSize);
         }
 
         if (this.loopThread == null)
@@ -72,9 +69,11 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (loop.getInputManager() != null){
-            return loop.getInputManager().onTouchEvent(event);
+        boolean handled = inputSystem.onTouchEvent(event);
+        if (handled){
+            return true;
+        } else {
+            return super.onTouchEvent(event);
         }
-        return super.onTouchEvent(event);
     }
 }

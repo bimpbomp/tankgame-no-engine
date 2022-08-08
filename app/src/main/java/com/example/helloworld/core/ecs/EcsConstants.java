@@ -1,4 +1,4 @@
-package com.example.helloworld.ecs;
+package com.example.helloworld.core.ecs;
 
 public class EcsConstants {
     public static final int MAX_COMPONENTS = 32;

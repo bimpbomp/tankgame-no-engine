@@ -1,18 +1,16 @@
-package com.example.helloworld.systems;
+package com.example.helloworld.systems.render;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.util.Log;
 import com.example.helloworld.components.*;
 import com.example.helloworld.components.renderable.*;
-import com.example.helloworld.ecs.Component;
-import com.example.helloworld.ecs.Coordinator;
-import com.example.helloworld.ecs.Entity;
-import com.example.helloworld.ecs.GameSystem;
-import com.example.helloworld.old.BoundingBox;
-import com.example.helloworld.GameSurface;
+import com.example.helloworld.core.ecs.Component;
+import com.example.helloworld.core.ecs.Coordinator;
+import com.example.helloworld.core.ecs.Entity;
+import com.example.helloworld.core.ecs.GameSystem;
+import com.example.helloworld.core.android.GameSurface;
 import org.jbox2d.common.Vec2;
 
 import java.util.HashSet;

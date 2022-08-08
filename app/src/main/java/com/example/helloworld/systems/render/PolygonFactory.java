@@ -1,4 +1,4 @@
-package com.example.helloworld;
+package com.example.helloworld.systems.render;
 
 import com.example.helloworld.components.renderable.RenderablePolygon;
 import org.jbox2d.common.Vec2;

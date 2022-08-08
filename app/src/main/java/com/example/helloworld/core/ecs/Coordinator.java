@@ -1,4 +1,4 @@
-package com.example.helloworld.ecs;
+package com.example.helloworld.core.ecs;
 
 public class Coordinator {
     private ComponentManager componentManager;
