@@ -4,6 +4,7 @@ public class Coordinator {
     private ComponentManager componentManager;
     private EntityManager entityManager;
     private SystemManager systemManager;
+    private Entity playerViewport;
 
     public Coordinator() {
         this.componentManager = new ComponentManager();
@@ -47,5 +48,13 @@ public class Coordinator {
 
     public void registerSystem(GameSystem system){
         systemManager.registerSystem(system);
+    }
+
+    public Entity getPlayerViewport() {
+        return playerViewport;
+    }
+
+    public void setPlayerViewport(Entity playerViewport) {
+        this.playerViewport = playerViewport;
     }
 }

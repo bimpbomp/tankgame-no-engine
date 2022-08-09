@@ -1,7 +1,6 @@
 package com.example.helloworld.systems;
 
 import com.example.helloworld.components.PhysicsBody;
-import com.example.helloworld.components.Transform;
 import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
 import com.example.helloworld.core.ecs.GameSystem;
@@ -21,16 +20,16 @@ public class PhysicsSystem extends GameSystem {
         world = new World(gravity);
     }
 
-    public PhysicsBody createPhysicsBody(Transform transform){
+    public PhysicsBody createPhysicsBody(Entity entity){
         PhysicsBody physicsBody = new PhysicsBody();
         //body definition
         BodyDef bd = new BodyDef();
-        bd.position.set(transform.position.x, transform.position.y);
+        bd.position.set(entity.position.x, entity.position.y);
         bd.type = BodyType.DYNAMIC;
 
         //define shape of the body.
         CircleShape cs = new CircleShape();
-        cs.m_radius = transform.scale;
+        cs.m_radius = entity.scale;
 
         //define fixture of the body.
         FixtureDef fd = new FixtureDef();
@@ -56,11 +55,10 @@ public class PhysicsSystem extends GameSystem {
         world.step(timeStep, velocityIterations, positionIterations);
 
         for (Entity entity : entities){
-            Transform transform = (Transform) coordinator.getComponent(entity, Transform.class);
             PhysicsBody physicsBody = (PhysicsBody) coordinator.getComponent(entity, PhysicsBody.class);
 
-            transform.position = physicsBody.body.getPosition();
-            transform.angle = physicsBody.body.getAngle();
+            entity.position = physicsBody.body.getPosition();
+            entity.angle = physicsBody.body.getAngle();
         }
     }
 }

@@ -2,12 +2,12 @@ package com.example.helloworld.core;
 
 import android.graphics.Color;
 import android.util.Log;
+import com.example.helloworld.components.Ui;
 import com.example.helloworld.core.android.GameSurface;
 import com.example.helloworld.components.PhysicsBody;
 import com.example.helloworld.components.Viewport;
 import com.example.helloworld.components.renderable.RenderableCircle;
 import com.example.helloworld.components.renderable.RenderablePolygon;
-import com.example.helloworld.components.Transform;
 import com.example.helloworld.components.renderable.RenderableSprite;
 import com.example.helloworld.components.renderable.RenderableText;
 import com.example.helloworld.core.android.EventLogger;
@@ -16,9 +16,11 @@ import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
 import com.example.helloworld.core.ecs.Signature;
 import com.example.helloworld.systems.PhysicsSystem;
+import com.example.helloworld.systems.input.GameInputSystem;
 import com.example.helloworld.systems.render.PolygonFactory;
 import com.example.helloworld.systems.render.RenderSystem;
 import com.example.helloworld.systems.ViewportSystem;
+import com.example.helloworld.systems.ui.UiSystem;
 import org.jbox2d.common.Vec2;
 
 // Loop taken from: https://dewitters.com/dewitters-gameloop/
@@ -27,6 +29,8 @@ public class Loop implements Runnable {
     private RenderSystem renderSystem;
     private PhysicsSystem physicsSystem;
     private ViewportSystem viewportSystem;
+    private GameInputSystem gameInputSystem;
+    private UiSystem uiSystem;
     private EventLogger eventLogger;
     private boolean gameIsRunning;
 
@@ -34,10 +38,9 @@ public class Loop implements Runnable {
     }
 
     public void initialiseGame(GameSurface gameSurface) {
-        eventLogger = new EventLogger();
+        //eventLogger = new EventLogger();
         coordinator = new Coordinator();
 
-        coordinator.registerComponentType(Component.getType(Transform.class));
         coordinator.registerComponentType(Component.getType(PhysicsBody.class));
         coordinator.registerComponentType(Component.getType(RenderablePolygon.class));
         coordinator.registerComponentType(Component.getType(RenderableCircle.class));
@@ -69,41 +72,51 @@ public class Loop implements Runnable {
             viewportSystem.setSignature(signature);
         }
 
+        {
+            uiSystem = new UiSystem(coordinator);
+            coordinator.registerSystem(uiSystem);
+            Signature signature = new Signature();
+            signature.set(Component.getType(Ui.class));
+            uiSystem.setSignature(signature);
+        }
+
+        {
+            gameInputSystem = new GameInputSystem(coordinator);
+            coordinator.registerSystem(gameInputSystem);
+            Signature signature = new Signature();
+            signature.set(Component.getType(Ui.class));
+            gameInputSystem.setSignature(signature);
+        }
+
         Entity player;
         {
             Entity entity = coordinator.createEntity();
             player = entity;
-            Transform transform = new Transform();
-            transform.position = new Vec2(100, 100);
-            transform.scale = 100f;
-            coordinator.addComponent(entity, transform);
+            entity.position = new Vec2(100, 100);
+            entity.scale = 100f;
             RenderablePolygon renderablePolygon = PolygonFactory.generateRectangle(100, 100);
             renderablePolygon.zOrder = 99;
             renderablePolygon.color = Color.GREEN;
             coordinator.addComponent(entity, renderablePolygon);
-            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(transform);
+            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity);
             coordinator.addComponent(entity, physicsBody);
         }
 
         {
             Entity entity = coordinator.createEntity();
-            Transform transform = new Transform();
-            transform.position = new Vec2(400, 100);
-            transform.scale = 200f;
-            coordinator.addComponent(entity, transform);
+            entity.position = new Vec2(400, 100);
+            entity.scale = 200f;
             RenderablePolygon renderablePolygon = PolygonFactory.generateTriangle(200, 200);
             renderablePolygon.zOrder = 100;
             renderablePolygon.color = Color.RED;
             coordinator.addComponent(entity, renderablePolygon);
-            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(transform);
+            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity);
             coordinator.addComponent(entity, physicsBody);
         }
 
         {
             Entity entity = coordinator.createEntity();
-            Transform transform = new Transform();
-            transform.position = new Vec2(0, 0);
-            coordinator.addComponent(entity, transform);
+            entity.position = new Vec2(0, 0);
             Viewport viewport = new Viewport();
             viewport.entityFocussedOn = player;
             Log.d("Loading", "Screen width " + gameSurface.getWidth() + " height " + gameSurface.getHeight());
@@ -111,11 +124,14 @@ public class Loop implements Runnable {
             viewport.height = gameSurface.getHeight();
             coordinator.addComponent(entity, viewport);
             renderSystem.setViewport(entity);
+            coordinator.setPlayerViewport(entity);
         }
     }
 
     public void updateGame(){
         float delta = 0.0f;
+        gameInputSystem.update(delta);
+        uiSystem.update(delta);
         //physicsSystem.update(delta);
         viewportSystem.update(delta);
     }
