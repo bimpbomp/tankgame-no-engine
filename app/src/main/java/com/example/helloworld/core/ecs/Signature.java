@@ -32,11 +32,11 @@ public class Signature {
     }
 
     public boolean contains(Signature signature){
-        byte[] thisBytes = this.sig.toByteArray();
+        byte[] thisBytes = signature.sig.toByteArray();
         BitSet temp = BitSet.valueOf(thisBytes);
-        temp.and(signature.sig);
+        temp.and(this.sig);
 
-        return temp.equals(this.sig);
+        return temp.equals(signature.sig);
     }
 
     @NonNull

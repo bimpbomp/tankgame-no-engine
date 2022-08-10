@@ -33,12 +33,10 @@ public abstract class GameSystem {
     }
 
     public boolean caresAboutEntity(Entity entity){
-        //return this.signature.contains(entity.signature);
         return entity.signature.contains(this.signature);
     }
 
     public void entitySignatureChanged(Entity entity){
-        Log.d("Loading", this.getClass().getSimpleName() + " sig: " + this.signature + ": Entity " + entity.id + " changed sig to " + entity.signature);
         if (caresAboutEntity(entity))
             addEntity(entity);
         else

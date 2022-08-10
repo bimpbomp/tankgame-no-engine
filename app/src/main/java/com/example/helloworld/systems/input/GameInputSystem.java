@@ -33,7 +33,6 @@ public class GameInputSystem extends GameSystem implements ISubscriber {
         // - what function to call when it is interacted with (likely so it can broadcast it's own event? e.g. player_move_up_event)
 
         SystemInputEvent event = inputBuffer.peek();
-        Log.d("Input", "Number of input elements: " + entities.size());
 
         while (event != null){
             event = inputBuffer.poll();

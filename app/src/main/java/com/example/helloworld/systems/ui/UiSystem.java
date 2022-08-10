@@ -68,23 +68,6 @@ public class UiSystem extends GameSystem implements ISubscriber {
 
     private void changeToLevelUi(){
         clearCurrentUi();
-
-//        Entity entity = coordinator.createEntity();
-//        entity.position = new Vec2(200, 200);
-//        Renderable renderablePolygon = PolygonFactory.generateRectangle(100, 100);
-//        renderablePolygon.zOrder = 1000;
-//        renderablePolygon.color = Color.BLUE;
-//        renderablePolygon.isScreenElement = true;
-//        coordinator.addComponent(entity, renderablePolygon);
-//        Ui uiComponent = new Ui();
-//        uiComponent.height = 100;
-//        uiComponent.width = 100;
-//        uiComponent.onActivate = () -> Log.d("UI", "pause button onActivate");
-//        uiComponent.onDeactivate = () -> {
-//            Log.d("UI", "changing from level to pause");
-//            uiStatePublisher.notify(new UiContextChangeEvent(UiContextState.LEVEL, UiContextState.PAUSE_MENU));
-//        };
-//        coordinator.addComponent(entity, uiComponent);
         ButtonFactory.RectangularButtonInfo buttonInfo = new ButtonFactory.RectangularButtonInfo(
                 new Vec2(200, 200),
                 100,
@@ -110,7 +93,7 @@ public class UiSystem extends GameSystem implements ISubscriber {
                 100,
                 100,
                 100,
-                Color.YELLOW,
+                Color.BLUE,
                 () -> Log.d("UI", "un-pause button onActivate"),
                 () ->{
                         Log.d("UI", "changing from pause to level");
