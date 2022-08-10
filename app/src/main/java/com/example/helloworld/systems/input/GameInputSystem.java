@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class GameInputSystem extends GameSystem implements ISubscriber {
     private final Queue<SystemInputEvent> inputBuffer;
     private final Publisher publisher;
-    private int count;
 
     public GameInputSystem(Coordinator coordinator) {
         super(coordinator);
@@ -24,7 +23,6 @@ public class GameInputSystem extends GameSystem implements ISubscriber {
         this.publisher = new Publisher();
         PublisherHub.getInstance().addPublisher(GameEventType.UI_CONTEXT_CHANGE, publisher);
         PublisherHub.getInstance().subscribe(GameEventType.SYSTEM_INPUT_EVENT, this);
-        count = 0;
     }
 
     @Override
@@ -35,6 +33,7 @@ public class GameInputSystem extends GameSystem implements ISubscriber {
         // - what function to call when it is interacted with (likely so it can broadcast it's own event? e.g. player_move_up_event)
 
         SystemInputEvent event = inputBuffer.peek();
+        Log.d("Input", "Number of input elements: " + entities.size());
 
         while (event != null){
             event = inputBuffer.poll();
@@ -43,7 +42,7 @@ public class GameInputSystem extends GameSystem implements ISubscriber {
 
             //todo process event. Consider how to prevent us being in an infinite loop here if system keeps adding more input
             // maybe need to have the onNotify method update some sort of mapping/context instead of adding to a buffer.
-            Log.d("Input", "Input event type: " + event.systemInputEventType);
+            Log.d("Input", "GameInput event type: " + event.systemInputEventType);
 
             for (Entity entity : entities){
                 Ui uiComponent = (Ui) coordinator.getComponent(entity, Ui.class);
@@ -55,7 +54,7 @@ public class GameInputSystem extends GameSystem implements ISubscriber {
                             uiComponent.onDeactivate.onDeactivate();
                         break;
                     case POINTER_DOWN:
-                        if (containsCoordinates(entity, uiComponent, eventLocation) && uiComponent.pointerId < 0) {
+                        if (uiComponent.containsCoordinate.containsCoordinate(eventLocation) && uiComponent.pointerId < 0) {
                             uiComponent.onActivate.onActivate();
                             uiComponent.pointerId = eventId;
                         }
@@ -65,44 +64,8 @@ public class GameInputSystem extends GameSystem implements ISubscriber {
                 }
             }
 
-//            if (event.systemInputEventType == SystemInputEventType.POINTER_DOWN) {
-//                if (count == 0){
-//                    publisher.notify(new UiContextChangeEvent(UiContextState.NONE, UiContextState.LOADING));
-//                } else {
-//                    if (count % 2 == 0) {
-//                        publisher.notify(new UiContextChangeEvent(UiContextState.LEVEL, UiContextState.LOADING));
-//                    } else {
-//                        publisher.notify(new UiContextChangeEvent(UiContextState.LOADING, UiContextState.LEVEL));
-//                    }
-//                }
-//                count++;
-//            }
-
             event = inputBuffer.peek();
         }
-    }
-
-    private boolean containsCoordinates (Entity uiEntity, Ui uiComponent, Vec2 coordinates){
-        float left = uiEntity.position.x - uiComponent.width / 2f;
-        float top = uiEntity.position.y - uiComponent.height / 2f;
-        float right = uiEntity.position.x + uiComponent.width / 2f;
-        float bottom = uiEntity.position.y + uiComponent.height / 2f;
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("(");
-        stringBuilder.append(left);
-        stringBuilder.append(", ");
-        stringBuilder.append(top);
-        stringBuilder.append("), (");
-        stringBuilder.append(right);
-        stringBuilder.append(", ");
-        stringBuilder.append(bottom);
-        stringBuilder.append(") ");
-
-        Log.d("Input", stringBuilder.toString());
-        Log.d("Input", coordinates.toString());
-
-        return left < coordinates.x && top < coordinates.y && right > coordinates.x && bottom > coordinates.y;
     }
 
     @Override

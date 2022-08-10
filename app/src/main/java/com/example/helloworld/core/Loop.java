@@ -3,13 +3,10 @@ package com.example.helloworld.core;
 import android.graphics.Color;
 import android.util.Log;
 import com.example.helloworld.components.Ui;
+import com.example.helloworld.components.renderable.Renderable;
 import com.example.helloworld.core.android.GameSurface;
 import com.example.helloworld.components.PhysicsBody;
 import com.example.helloworld.components.Viewport;
-import com.example.helloworld.components.renderable.RenderableCircle;
-import com.example.helloworld.components.renderable.RenderablePolygon;
-import com.example.helloworld.components.renderable.RenderableSprite;
-import com.example.helloworld.components.renderable.RenderableText;
 import com.example.helloworld.core.android.EventLogger;
 import com.example.helloworld.core.ecs.Component;
 import com.example.helloworld.core.ecs.Coordinator;
@@ -42,18 +39,19 @@ public class Loop implements Runnable {
         coordinator = new Coordinator();
 
         coordinator.registerComponentType(Component.getType(PhysicsBody.class));
-        coordinator.registerComponentType(Component.getType(RenderablePolygon.class));
-        coordinator.registerComponentType(Component.getType(RenderableCircle.class));
-        coordinator.registerComponentType(Component.getType(RenderableText.class));
-        coordinator.registerComponentType(Component.getType(RenderableSprite.class));
+        Log.d("Loading", "PhysicsBody id: " + Component.getType(PhysicsBody.class));
+        coordinator.registerComponentType(Component.getType(Renderable.class));
+        Log.d("Loading", "Renderable id: " + Component.getType(Renderable.class));
         coordinator.registerComponentType(Component.getType(Viewport.class));
+        Log.d("Loading", "Viewport id: " + Component.getType(Viewport.class));
         coordinator.registerComponentType(Component.getType(Ui.class));
+        Log.d("Loading", "Ui id: " + Component.getType(Ui.class));
 
         {
             renderSystem = new RenderSystem(coordinator, gameSurface);
             coordinator.registerSystem(renderSystem);
             Signature signature = new Signature();
-            signature.set(Component.getType(RenderablePolygon.class));
+            signature.set(Component.getType(Renderable.class));
             renderSystem.setSignature(signature);
         }
 
@@ -95,24 +93,26 @@ public class Loop implements Runnable {
             player = entity;
             entity.position = new Vec2(100, 100);
             entity.scale = 100f;
-            RenderablePolygon renderablePolygon = PolygonFactory.generateRectangle(100, 100);
+            Renderable renderablePolygon = PolygonFactory.generateRectangle(100, 100);
             renderablePolygon.zOrder = 99;
             renderablePolygon.color = Color.GREEN;
             coordinator.addComponent(entity, renderablePolygon);
             PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity);
             coordinator.addComponent(entity, physicsBody);
+            Log.d("Loading", entity.id + ": " + entity.signature.toString());
         }
 
         {
             Entity entity = coordinator.createEntity();
             entity.position = new Vec2(400, 100);
             entity.scale = 200f;
-            RenderablePolygon renderablePolygon = PolygonFactory.generateTriangle(200, 200);
+            Renderable renderablePolygon = PolygonFactory.generateTriangle(200, 200);
             renderablePolygon.zOrder = 100;
             renderablePolygon.color = Color.RED;
             coordinator.addComponent(entity, renderablePolygon);
             PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity);
             coordinator.addComponent(entity, physicsBody);
+            Log.d("Loading", entity.id + ": " + entity.signature.toString());
         }
 
         {
@@ -126,6 +126,7 @@ public class Loop implements Runnable {
             coordinator.addComponent(entity, viewport);
             renderSystem.setViewport(entity);
             coordinator.setPlayerViewport(entity);
+            Log.d("Loading", entity.id + ": " + entity.signature.toString());
         }
     }
 

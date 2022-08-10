@@ -4,21 +4,20 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.util.Log;
 import com.example.helloworld.components.*;
-import com.example.helloworld.components.renderable.*;
-import com.example.helloworld.core.ecs.Component;
+import com.example.helloworld.components.renderable.Renderable;
+import com.example.helloworld.components.renderable.RenderableType;
 import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
 import com.example.helloworld.core.ecs.GameSystem;
 import com.example.helloworld.core.android.GameSurface;
 import org.jbox2d.common.Vec2;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class RenderSystem extends GameSystem {
-    private final Set<SortableRenderable> sortedEntities;
+    private final List<SortableRenderable> sortedEntities;
     private final Set<Entity> newEntities;
     private final GameSurface gameSurface;
     private final Paint paint;
@@ -28,7 +27,7 @@ public class RenderSystem extends GameSystem {
 
     public RenderSystem(Coordinator coordinator, GameSurface gameSurface) {
         super(coordinator);
-        this.sortedEntities = new TreeSet<>();
+        this.sortedEntities = new ArrayList<>();
         this.newEntities = new HashSet<>();
         this.gameSurface = gameSurface;
         this.paint = new Paint();
@@ -50,17 +49,22 @@ public class RenderSystem extends GameSystem {
 
             for (SortableRenderable sortableRenderable : sortedEntities){
                 // determine entity's renderable type and render appropriately
-                int entityType = sortableRenderable.renderable.getType();
+                RenderableType entityType = sortableRenderable.renderable.type;
                 Vec2 screenCoordinates = convertToScreenCoordinates(sortableRenderable.entity, sortableRenderable.renderable);
 
-                if (entityType == Component.getType(RenderablePolygon.class)){
-                    renderPolygon(screenCoordinates, (RenderablePolygon) sortableRenderable.renderable);
-                } else if (entityType == Component.getType(RenderableCircle.class)) {
-                    renderCircle(screenCoordinates, (RenderableCircle) sortableRenderable.renderable);
-                } else if (entityType == Component.getType(RenderableText.class)) {
-                    renderText(screenCoordinates, (RenderableText) sortableRenderable.renderable);
-                } else if (entityType == Component.getType(RenderableSprite.class)) {
-                    renderSprite(screenCoordinates, (RenderableSprite) sortableRenderable.renderable);
+                switch (entityType) {
+                    case POLYGON:
+                        renderPolygon(screenCoordinates, sortableRenderable.renderable);
+                        break;
+                    case CIRCLE:
+                        renderCircle(screenCoordinates, sortableRenderable.renderable);
+                        break;
+                    case TEXT:
+                        renderText(screenCoordinates, sortableRenderable.renderable);
+                        break;
+                    case SPRITE:
+                        renderSprite(screenCoordinates, sortableRenderable.renderable);
+                        break;
                 }
             }
         }
@@ -71,7 +75,7 @@ public class RenderSystem extends GameSystem {
         }
     }
 
-    public void renderPolygon(Vec2 screenCoordinates, RenderablePolygon renderablePolygon){
+    public void renderPolygon(Vec2 screenCoordinates, Renderable renderablePolygon){
         paint.setColor(renderablePolygon.color);
 
         if (renderablePolygon.vertexVectors.size() > 0){
@@ -89,22 +93,22 @@ public class RenderSystem extends GameSystem {
         }
     }
 
-    public void renderText(Vec2 screenCoordinates, RenderableText renderableText){
+    public void renderText(Vec2 screenCoordinates, Renderable renderableText){
 
     }
 
-    public void renderCircle(Vec2 screenCoordinates, RenderableCircle renderableCircle){
+    public void renderCircle(Vec2 screenCoordinates, Renderable renderableCircle){
 
     }
 
-    public void renderSprite(Vec2 screenCoordinates, RenderableSprite renderableSprite){
+    public void renderSprite(Vec2 screenCoordinates, Renderable renderableSprite){
 
     }
 
     private Vec2 convertToScreenCoordinates(Entity entity, Renderable renderable){
-        if (renderable.isScreenElement)
+        if (renderable.isScreenElement) {
             return entity.position;
-        else {
+        }else {
             return new Vec2(
                     entity.position.x - (camera.entity.position.x - camera.viewport.width / 2f),
                     entity.position.y - (camera.entity.position.y - camera.viewport.height / 2f)
@@ -114,24 +118,14 @@ public class RenderSystem extends GameSystem {
 
     public void processNewEntities(){
         for (Entity entity : newEntities){
-            Renderable renderable;
-
-            if (entity.signature.get(Component.getType(RenderablePolygon.class))){
-                renderable = (Renderable) coordinator.getComponent(entity, RenderablePolygon.class);
-            } else if (entity.signature.get(Component.getType(RenderableCircle.class))) {
-                renderable = (Renderable) coordinator.getComponent(entity, RenderableCircle.class);
-            } else if (entity.signature.get(Component.getType(RenderableText.class))) {
-                renderable = (Renderable) coordinator.getComponent(entity, RenderableText.class);
-            } else if (entity.signature.get(Component.getType(RenderableSprite.class))) {
-                renderable = (Renderable) coordinator.getComponent(entity, RenderableSprite.class);
-            } else {
-                renderable = null;
-            }
+            Renderable renderable = (Renderable) coordinator.getComponent(entity, Renderable.class);
 
             if (renderable != null){
+                Log.d("Loading", "new render entity: " + entity.id + ", type: " + renderable.type);
                 sortedEntities.add(new SortableRenderable(entity, renderable));
             }
         }
+        Collections.sort(sortedEntities);
         newEntities.clear();
         entitiesAdded = false;
     }
@@ -147,6 +141,7 @@ public class RenderSystem extends GameSystem {
         super.removeEntity(entity);
         for (SortableRenderable sortableRenderable : this.sortedEntities){
             if (sortableRenderable.entity.equals(entity)){
+                Log.d("Loading", "removed render entity: " + entity.id);
                 this.sortedEntities.remove(sortableRenderable);
                 break;
             }
