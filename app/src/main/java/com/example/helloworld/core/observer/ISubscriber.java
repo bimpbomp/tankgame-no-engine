@@ -1,5 +1,5 @@
 package com.example.helloworld.core.observer;
 
-public interface Subscriber {
+public interface ISubscriber {
     void onNotify(GameEvent event);
 }

@@ -47,6 +47,7 @@ public class Loop implements Runnable {
         coordinator.registerComponentType(Component.getType(RenderableText.class));
         coordinator.registerComponentType(Component.getType(RenderableSprite.class));
         coordinator.registerComponentType(Component.getType(Viewport.class));
+        coordinator.registerComponentType(Component.getType(Ui.class));
 
         {
             renderSystem = new RenderSystem(coordinator, gameSurface);
@@ -73,19 +74,19 @@ public class Loop implements Runnable {
         }
 
         {
-            uiSystem = new UiSystem(coordinator);
-            coordinator.registerSystem(uiSystem);
-            Signature signature = new Signature();
-            signature.set(Component.getType(Ui.class));
-            uiSystem.setSignature(signature);
-        }
-
-        {
             gameInputSystem = new GameInputSystem(coordinator);
             coordinator.registerSystem(gameInputSystem);
             Signature signature = new Signature();
             signature.set(Component.getType(Ui.class));
             gameInputSystem.setSignature(signature);
+        }
+
+        {
+            uiSystem = new UiSystem(coordinator);
+            coordinator.registerSystem(uiSystem);
+            Signature signature = new Signature();
+            signature.set(Component.getType(Ui.class));
+            uiSystem.setSignature(signature);
         }
 
         Entity player;

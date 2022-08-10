@@ -2,35 +2,36 @@ package com.example.helloworld.systems.ui;
 
 import android.graphics.Color;
 import android.util.Log;
+import com.example.helloworld.components.Ui;
 import com.example.helloworld.components.Viewport;
 import com.example.helloworld.components.renderable.RenderablePolygon;
 import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
 import com.example.helloworld.core.ecs.GameSystem;
-import com.example.helloworld.core.observer.GameEvent;
-import com.example.helloworld.core.observer.GameEventType;
-import com.example.helloworld.core.observer.PublisherHub;
-import com.example.helloworld.core.observer.Subscriber;
+import com.example.helloworld.core.observer.*;
 import com.example.helloworld.systems.render.PolygonFactory;
 import org.jbox2d.common.Vec2;
 
-public class UiSystem extends GameSystem implements Subscriber {
+public class UiSystem extends GameSystem implements ISubscriber {
     private UiContextState currentState;
     private UiContextState newState;
     private boolean stateChangeNeeded;
+    private Publisher uiStatePublisher;
 
     public UiSystem(Coordinator coordinator) {
         super(coordinator);
-        stateChangeNeeded = false;
+        stateChangeNeeded = true;
+        newState = UiContextState.LEVEL;
         currentState = UiContextState.NONE;
-        newState = UiContextState.NONE;
         PublisherHub.getInstance().subscribe(GameEventType.UI_CONTEXT_CHANGE, this);
+        uiStatePublisher = new Publisher();
+        PublisherHub.getInstance().addPublisher(GameEventType.UI_CONTEXT_CHANGE, uiStatePublisher);
     }
 
     @Override
     public void update(float delta) {
         if (stateChangeNeeded){
-            Log.d("Loading", "Changing UI state from " + currentState.name() + " to " + newState.name());
+            Log.d("UI", "Changing UI state from " + currentState.name() + " to " + newState.name());
 
             //process state change
             switch (newState){
@@ -70,21 +71,26 @@ public class UiSystem extends GameSystem implements Subscriber {
 
     private void changeToLevelUi(){
         clearCurrentUi();
-        Entity playerViewport = coordinator.getPlayerViewport();
 
         Entity entity = coordinator.createEntity();
         entity.position = new Vec2(200, 200);
         RenderablePolygon renderablePolygon = PolygonFactory.generateRectangle(100, 100);
         renderablePolygon.zOrder = 1000;
         renderablePolygon.color = Color.BLUE;
+        renderablePolygon.isScreenElement = true;
         coordinator.addComponent(entity, renderablePolygon);
+        Ui uiComponent = new Ui();
+        uiComponent.height = 100;
+        uiComponent.width = 100;
+        uiComponent.onActivate = () -> Log.d("UI", "pause button onActivate");
+        uiComponent.onDeactivate = () -> {
+            Log.d("UI", "changing from level to pause");
+            uiStatePublisher.notify(new UiContextChangeEvent(UiContextState.LEVEL, UiContextState.PAUSE_MENU));
+        };
+        coordinator.addComponent(entity, uiComponent);
     }
 
     private void changeToPauseUi(){
-        clearCurrentUi();
-    }
-
-    private void changeToLoadingUi(){
         clearCurrentUi();
         Entity playerViewportEntity = coordinator.getPlayerViewport();
         Viewport viewport = (Viewport) coordinator.getComponent(playerViewportEntity, Viewport.class);
@@ -94,7 +100,21 @@ public class UiSystem extends GameSystem implements Subscriber {
         RenderablePolygon renderablePolygon = PolygonFactory.generateRectangle(100, 100);
         renderablePolygon.zOrder = 1000;
         renderablePolygon.color = Color.YELLOW;
+        renderablePolygon.isScreenElement = true;
         coordinator.addComponent(entity, renderablePolygon);
+        Ui uiComponent = new Ui();
+        uiComponent.height = 100;
+        uiComponent.width = 100;
+        uiComponent.onActivate = () -> Log.d("UI", "un-pause button onActivate");
+        uiComponent.onDeactivate = () -> {
+            Log.d("UI", "changing from pause to level");
+            uiStatePublisher.notify(new UiContextChangeEvent(UiContextState.PAUSE_MENU, UiContextState.LEVEL));
+        };
+        coordinator.addComponent(entity, uiComponent);
+    }
+
+    private void changeToLoadingUi(){
+        clearCurrentUi();
     }
 
     private void changeToMainMenuUi(){

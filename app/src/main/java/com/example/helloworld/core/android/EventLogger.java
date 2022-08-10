@@ -4,11 +4,11 @@ import android.util.Log;
 import com.example.helloworld.core.observer.GameEvent;
 import com.example.helloworld.core.observer.GameEventType;
 import com.example.helloworld.core.observer.PublisherHub;
-import com.example.helloworld.core.observer.Subscriber;
+import com.example.helloworld.core.observer.ISubscriber;
 import com.example.helloworld.systems.input.SystemInputEvent;
 import com.example.helloworld.systems.input.SystemInputEventType;
 
-public class EventLogger implements Subscriber {
+public class EventLogger implements ISubscriber {
     public EventLogger(){
         PublisherHub.getInstance().subscribe(GameEventType.SYSTEM_INPUT_EVENT, this);
     }

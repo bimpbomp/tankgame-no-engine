@@ -15,6 +15,7 @@ public class PublisherHub {
 
     public void addPublisher(GameEventType gameEventType, Publisher publisher){
         if (publishers.containsKey(gameEventType)){
+            publishers.get(gameEventType).forEach(existingPublisher -> publisher.addSubscriber(existingPublisher.getSubscribers()));
             publishers.get(gameEventType).add(publisher);
         } else {
             List<Publisher> newPublisherType = new ArrayList<>();
@@ -23,15 +24,15 @@ public class PublisherHub {
         }
     }
 
-    public void subscribe(GameEventType gameEventType, Subscriber subscriber){
+    public void subscribe(GameEventType gameEventType, ISubscriber subscriber){
         if (publishers.containsKey(gameEventType)){
-            publishers.get(gameEventType).forEach(publisher -> publisher.addObserver(subscriber));
+            publishers.get(gameEventType).forEach(publisher -> publisher.addSubscriber(subscriber));
         }
     }
 
-    public void unsubscribe(GameEventType gameEventType, Subscriber subscriber){
+    public void unsubscribe(GameEventType gameEventType, ISubscriber subscriber){
         if (publishers.containsKey(gameEventType)){
-            publishers.get(gameEventType).forEach(publisher -> publisher.removeObserver(subscriber));
+            publishers.get(gameEventType).forEach(publisher -> publisher.removeSubscriber(subscriber));
         }
     }
 
