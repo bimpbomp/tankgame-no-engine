@@ -3,6 +3,7 @@ package com.example.helloworld.core;
 import android.graphics.Color;
 import android.util.Log;
 import com.example.helloworld.components.Ui;
+import com.example.helloworld.components.TankInput;
 import com.example.helloworld.components.renderable.Renderable;
 import com.example.helloworld.core.android.GameSurface;
 import com.example.helloworld.components.PhysicsBody;
@@ -13,6 +14,7 @@ import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
 import com.example.helloworld.core.ecs.Signature;
 import com.example.helloworld.systems.PhysicsSystem;
+import com.example.helloworld.systems.TankMovementSystem;
 import com.example.helloworld.systems.input.GameInputSystem;
 import com.example.helloworld.systems.render.PolygonFactory;
 import com.example.helloworld.systems.render.RenderSystem;
@@ -28,6 +30,7 @@ public class Loop implements Runnable {
     private ViewportSystem viewportSystem;
     private GameInputSystem gameInputSystem;
     private UiSystem uiSystem;
+    private TankMovementSystem tankMovementSystem;
     private EventLogger eventLogger;
     private boolean gameIsRunning;
 
@@ -46,6 +49,8 @@ public class Loop implements Runnable {
         Log.d("Loading", "Viewport id: " + Component.getType(Viewport.class));
         coordinator.registerComponentType(Component.getType(Ui.class));
         Log.d("Loading", "Ui id: " + Component.getType(Ui.class));
+        coordinator.registerComponentType(Component.getType(TankInput.class));
+        Log.d("Loading", "UiControllable id: " + Component.getType(TankInput.class));
 
         {
             renderSystem = new RenderSystem(coordinator, gameSurface);
@@ -87,30 +92,97 @@ public class Loop implements Runnable {
             uiSystem.setSignature(signature);
         }
 
-        Entity player;
+        {
+            tankMovementSystem = new TankMovementSystem(coordinator);
+            coordinator.registerSystem(tankMovementSystem);
+            Signature signature = new Signature();
+            signature.set(Component.getType(TankInput.class));
+            signature.set(Component.getType(PhysicsBody.class));
+            tankMovementSystem.setSignature(signature);
+        }
+
+        // player
         {
             Entity entity = coordinator.createEntity();
-            player = entity;
             entity.position = new Vec2(100, 100);
             entity.scale = 100f;
-            Renderable renderablePolygon = PolygonFactory.generateRectangle(100, 100);
+            int width = 100;
+            int height = 100;
+            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height);
             renderablePolygon.zOrder = 99;
             renderablePolygon.color = Color.GREEN;
             coordinator.addComponent(entity, renderablePolygon);
-            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity);
+            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity.position, true, width, height);
+            coordinator.addComponent(entity, physicsBody);
+
+            TankInput tankInput = new TankInput();
+            coordinator.addComponent(entity, tankInput);
+
+            coordinator.setPlayer(entity);
+            uiSystem.setControlledTankInput(tankInput);
+            Log.d("Loading", entity.id + "(player): " + entity.signature.toString());
+        }
+
+        // wall
+        {
+            Entity entity = coordinator.createEntity();
+            entity.position = new Vec2(100, 400);
+            entity.scale = 200f;
+            int width = 450;
+            int height = 150;
+            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height);
+            renderablePolygon.zOrder = 99;
+            renderablePolygon.color = Color.BLACK;
+            coordinator.addComponent(entity, renderablePolygon);
+            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity.position, false, width, height);
             coordinator.addComponent(entity, physicsBody);
             Log.d("Loading", entity.id + ": " + entity.signature.toString());
         }
 
+        // wall
+        {
+            Entity entity = coordinator.createEntity();
+            entity.position = new Vec2(100, -200);
+            entity.scale = 200f;
+            int width = 450;
+            int height = 150;
+            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height);
+            renderablePolygon.zOrder = 99;
+            renderablePolygon.color = Color.BLACK;
+            coordinator.addComponent(entity, renderablePolygon);
+            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity.position, false, width, height);
+            coordinator.addComponent(entity, physicsBody);
+            Log.d("Loading", entity.id + ": " + entity.signature.toString());
+        }
+
+        // wall
+        {
+            Entity entity = coordinator.createEntity();
+            entity.position = new Vec2(-200, 100);
+            entity.scale = 200f;
+            int width = 150;
+            int height = 450;
+            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height);
+            renderablePolygon.zOrder = 99;
+            renderablePolygon.color = Color.BLACK;
+            coordinator.addComponent(entity, renderablePolygon);
+            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity.position, false, width, height);
+            coordinator.addComponent(entity, physicsBody);
+            Log.d("Loading", entity.id + ": " + entity.signature.toString());
+        }
+
+        // wall
         {
             Entity entity = coordinator.createEntity();
             entity.position = new Vec2(400, 100);
             entity.scale = 200f;
-            Renderable renderablePolygon = PolygonFactory.generateTriangle(200, 200);
-            renderablePolygon.zOrder = 100;
-            renderablePolygon.color = Color.RED;
+            int width = 150;
+            int height = 450;
+            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height);
+            renderablePolygon.zOrder = 99;
+            renderablePolygon.color = Color.BLACK;
             coordinator.addComponent(entity, renderablePolygon);
-            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity);
+            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity.position, false, width, height);
             coordinator.addComponent(entity, physicsBody);
             Log.d("Loading", entity.id + ": " + entity.signature.toString());
         }
@@ -119,23 +191,16 @@ public class Loop implements Runnable {
             Entity entity = coordinator.createEntity();
             entity.position = new Vec2(0, 0);
             Viewport viewport = new Viewport();
-            viewport.entityFocussedOn = player;
+            viewport.entityFocussedOn = coordinator.getPlayer();
             Log.d("Loading", "Screen width " + gameSurface.getWidth() + " height " + gameSurface.getHeight());
             viewport.width = gameSurface.getWidth();
             viewport.height = gameSurface.getHeight();
             coordinator.addComponent(entity, viewport);
             renderSystem.setViewport(entity);
+
             coordinator.setPlayerViewport(entity);
             Log.d("Loading", entity.id + ": " + entity.signature.toString());
         }
-    }
-
-    public void updateGame(){
-        float delta = 0.0f;
-        gameInputSystem.update(delta);
-        uiSystem.update(delta);
-        //physicsSystem.update(delta);
-        viewportSystem.update(delta);
     }
 
     @Override
@@ -154,7 +219,7 @@ public class Loop implements Runnable {
             loops = 0;
 
             while (System.currentTimeMillis() > nextGameTick && loops < MAX_FRAMESKIP) {
-                updateGame();
+                updateGame(1f / TICKS_PER_SECOND);
 
                 nextGameTick += SKIP_TICKS;
                 loops++;
@@ -163,6 +228,14 @@ public class Loop implements Runnable {
             interpolation = (float) (System.currentTimeMillis() + SKIP_TICKS - nextGameTick) / (float) SKIP_TICKS;
             renderSystem.update(interpolation);
         }
+    }
+
+    public void updateGame(float delta){
+        gameInputSystem.update(delta);
+        uiSystem.update(delta);
+        tankMovementSystem.update(delta);
+        physicsSystem.update(delta);
+        viewportSystem.update(delta);
     }
 
     public void setGameIsRunning(boolean isRunning){

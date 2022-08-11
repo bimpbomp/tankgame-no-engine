@@ -5,6 +5,7 @@ public class Coordinator {
     private EntityManager entityManager;
     private SystemManager systemManager;
     private Entity playerViewport;
+    private Entity player;
 
     public Coordinator() {
         this.componentManager = new ComponentManager();
@@ -56,5 +57,13 @@ public class Coordinator {
 
     public void setPlayerViewport(Entity playerViewport) {
         this.playerViewport = playerViewport;
+    }
+
+    public Entity getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Entity player) {
+        this.player = player;
     }
 }

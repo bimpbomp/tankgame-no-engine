@@ -29,7 +29,7 @@ public class ButtonFactory {
             float right = newButton.position.x + uiComponent.width / 2f;
             float bottom = newButton.position.y + uiComponent.height / 2f;
             boolean result = left < coordinate.x && top < coordinate.y && right > coordinate.x && bottom > coordinate.y;
-            Log.d("Input", "Contains coordinate: " + result);
+            //Log.d("Input", "Contains coordinate: " + result);
             return left < coordinate.x && top < coordinate.y && right > coordinate.x && bottom > coordinate.y;
         };
         coordinator.addComponent(newButton, uiComponent);

@@ -2,6 +2,7 @@ package com.example.helloworld.systems.ui;
 
 import android.graphics.Color;
 import android.util.Log;
+import com.example.helloworld.components.TankInput;
 import com.example.helloworld.components.Viewport;
 import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
@@ -15,10 +16,12 @@ public class UiSystem extends GameSystem implements ISubscriber {
     private boolean stateChangeNeeded;
     private Publisher uiStatePublisher;
 
+    //LEVEL specific controls
     private boolean upPressed = false;
     private boolean leftPressed = false;
     private boolean rightPressed = false;
     private boolean downPressed = false;
+    private TankInput tankInput;
 
     public UiSystem(Coordinator coordinator) {
         super(coordinator);
@@ -54,30 +57,45 @@ public class UiSystem extends GameSystem implements ISubscriber {
                     break;
             }
             stateChangeNeeded = false;
-        }
-
-        Vec2 playerMovementInput = new Vec2();
-        int x;
-        int y;
-        if (leftPressed && !rightPressed){
-            x = -1;
-        } else if (rightPressed && !leftPressed){
-            x = 1;
+            currentState = newState;
         } else {
-            x = 0;
-        }
+            switch (currentState){
 
-        if (upPressed && !downPressed){
-            y = -1;
-        } else if (downPressed && !upPressed){
-            y = 1;
-        } else {
-            y = 0;
-        }
+                case MAIN_MENU:
+                    break;
+                case LOADING:
+                    break;
+                case LEVEL:
+                    Vec2 playerMovementInput = new Vec2();
+                    int x;
+                    int y;
+                    if (leftPressed && !rightPressed){
+                        x = -1;
+                    } else if (rightPressed && !leftPressed){
+                        x = 1;
+                    } else {
+                        x = 0;
+                    }
 
-        playerMovementInput.set(x, y);
-        playerMovementInput.normalize();
-        Log.d("Ui", "Input vector: " + playerMovementInput + " len: " + playerMovementInput.length());
+                    if (upPressed && !downPressed){
+                        y = -1;
+                    } else if (downPressed && !upPressed){
+                        y = 1;
+                    } else {
+                        y = 0;
+                    }
+
+                    playerMovementInput.set(x, y);
+                    playerMovementInput.normalize();
+                    Log.d("Physics", "input vector: " + playerMovementInput);
+                    tankInput.movementVector = playerMovementInput;
+                    break;
+                case PAUSE_MENU:
+                    break;
+                case NONE:
+                    break;
+            }
+        }
     }
 
     @Override
@@ -109,15 +127,15 @@ public class UiSystem extends GameSystem implements ISubscriber {
                 100,
                 Color.YELLOW,
                 () -> {
-                    Log.d("UI", "left button onActivate");
+                    //Log.d("UI", "left button onActivate");
                     leftPressed = true;
                 },
                 () -> {
-                    Log.d("UI", "left button onDeactivate");
+                    //Log.d("UI", "left button onDeactivate");
                     leftPressed = false;
                 },
                 () -> {
-                    Log.d("UI", "left button onDrag");
+                    //Log.d("UI", "left button onDrag");
                 }
         ));
 
@@ -181,22 +199,6 @@ public class UiSystem extends GameSystem implements ISubscriber {
 
     private void changeToPauseUi(){
         clearCurrentUi();
-//        Entity playerViewportEntity = coordinator.getPlayerViewport();
-//        Viewport viewport = (Viewport) coordinator.getComponent(playerViewportEntity, Viewport.class);
-//
-//        ButtonFactory.RectangularButtonInfo buttonInfo = new ButtonFactory.RectangularButtonInfo(
-//                new Vec2(viewport.width - 200, viewport.height - 200),
-//                100,
-//                100,
-//                100,
-//                Color.BLUE,
-//                () -> Log.d("UI", "un-pause button onActivate"),
-//                () ->{
-//                        Log.d("UI", "changing from pause to level");
-//                        uiStatePublisher.notify(new UiContextChangeEvent(UiContextState.PAUSE_MENU, UiContextState.LEVEL));
-//                }
-//        );
-//        Entity newButton = ButtonFactory.createRectangularButton(coordinator, buttonInfo);
     }
 
     private void changeToLoadingUi(){
@@ -207,4 +209,7 @@ public class UiSystem extends GameSystem implements ISubscriber {
         clearCurrentUi();
     }
 
+    public void setControlledTankInput(TankInput controlledTankInput) {
+        this.tankInput = controlledTankInput;
+    }
 }
