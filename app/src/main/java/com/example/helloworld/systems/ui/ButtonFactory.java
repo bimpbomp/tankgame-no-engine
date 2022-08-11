@@ -22,6 +22,7 @@ public class ButtonFactory {
         uiComponent.width = buttonInfo.width;
         uiComponent.onActivate = buttonInfo.onActivate;
         uiComponent.onDeactivate = buttonInfo.onDeactivate;
+        uiComponent.onDrag = buttonInfo.onDrag;
         uiComponent.containsCoordinate = coordinate -> {
             float left = newButton.position.x - uiComponent.width / 2f;
             float top = newButton.position.y - uiComponent.height / 2f;
@@ -45,8 +46,9 @@ public class ButtonFactory {
         public int color;
         public IOnActivate onActivate;
         public IOnDeactivate onDeactivate;
+        public IOnDrag onDrag;
 
-        public RectangularButtonInfo(Vec2 center, int width, int height, int zOrder, int color, IOnActivate onActivate, IOnDeactivate onDeactivate) {
+        public RectangularButtonInfo(Vec2 center, int width, int height, int zOrder, int color, IOnActivate onActivate, IOnDeactivate onDeactivate, IOnDrag onDrag) {
             this.center = center;
             this.width = width;
             this.height = height;
@@ -54,6 +56,7 @@ public class ButtonFactory {
             this.color = color;
             this.onActivate = onActivate;
             this.onDeactivate = onDeactivate;
+            this.onDrag = onDrag;
         }
     }
 }

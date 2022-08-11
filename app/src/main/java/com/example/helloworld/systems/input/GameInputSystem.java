@@ -27,10 +27,6 @@ public class GameInputSystem extends GameSystem implements ISubscriber {
 
     @Override
     public void update(float delta) {
-        // process input buffer based off current input context
-        // will need an InputComponent that each interactable UI element has, that contains:
-        // - where on the screen the element is
-        // - what function to call when it is interacted with (likely so it can broadcast it's own event? e.g. player_move_up_event)
 
         SystemInputEvent event = inputBuffer.peek();
 
@@ -41,16 +37,16 @@ public class GameInputSystem extends GameSystem implements ISubscriber {
 
             //todo process event. Consider how to prevent us being in an infinite loop here if system keeps adding more input
             // maybe need to have the onNotify method update some sort of mapping/context instead of adding to a buffer.
-            Log.d("Input", "GameInput event type: " + event.systemInputEventType);
-
             for (Entity entity : entities){
                 Ui uiComponent = (Ui) coordinator.getComponent(entity, Ui.class);
 
                 switch (event.systemInputEventType){
 
                     case POINTER_UP:
-                        if (uiComponent.pointerId == eventId)
+                        if (uiComponent.pointerId == eventId) {
                             uiComponent.onDeactivate.onDeactivate();
+                            uiComponent.pointerId = -1;
+                        }
                         break;
                     case POINTER_DOWN:
                         if (uiComponent.containsCoordinate.containsCoordinate(eventLocation) && uiComponent.pointerId < 0) {
@@ -59,6 +55,13 @@ public class GameInputSystem extends GameSystem implements ISubscriber {
                         }
                         break;
                     case POINTER_MOVE:
+                        if (!uiComponent.containsCoordinate.containsCoordinate(eventLocation) && uiComponent.pointerId == eventId) {
+                            uiComponent.onDeactivate.onDeactivate();
+                            uiComponent.pointerId = -1;
+                        }
+                        else if (uiComponent.containsCoordinate.containsCoordinate(eventLocation) && uiComponent.pointerId == eventId) {
+                            uiComponent.onDrag.onDrag();
+                        }
                         break;
                 }
             }

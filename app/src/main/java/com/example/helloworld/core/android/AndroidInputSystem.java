@@ -19,6 +19,7 @@ public class AndroidInputSystem {
     public boolean onTouchEvent(MotionEvent motionEvent){
         boolean eventHandled = true;
         int eventIndex = motionEvent.getActionIndex();
+        int pointerId = motionEvent.getPointerId(eventIndex);
         Vec2 eventPosition = new Vec2(motionEvent.getX(eventIndex), motionEvent.getY(eventIndex));
         SystemInputEventType systemInputEventType;
 
@@ -38,7 +39,7 @@ public class AndroidInputSystem {
                 return false;
         }
 
-        publisher.notify(new SystemInputEvent(systemInputEventType, eventIndex, eventPosition));
+        publisher.notify(new SystemInputEvent(systemInputEventType, pointerId, eventPosition));
 
         return eventHandled;
     }
