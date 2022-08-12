@@ -2,6 +2,7 @@ package com.example.helloworld.core;
 
 import android.graphics.Color;
 import android.util.Log;
+import com.example.helloworld.WorldObjectGenerator;
 import com.example.helloworld.components.Ui;
 import com.example.helloworld.components.TankInput;
 import com.example.helloworld.components.renderable.Renderable;
@@ -104,11 +105,10 @@ public class Loop implements Runnable {
         // player
         {
             Entity entity = coordinator.createEntity();
-            entity.position = new Vec2(100, 100);
-            entity.scale = 100f;
-            int width = 100;
-            int height = 100;
-            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height);
+            entity.position = new Vec2(10, 10);
+            int width = 1;
+            int height = 1;
+            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height, CoordinateSystem.WORLD);
             renderablePolygon.zOrder = 99;
             renderablePolygon.color = Color.GREEN;
             coordinator.addComponent(entity, renderablePolygon);
@@ -123,69 +123,11 @@ public class Loop implements Runnable {
             Log.d("Loading", entity.id + "(player): " + entity.signature.toString());
         }
 
-        // wall
-        {
-            Entity entity = coordinator.createEntity();
-            entity.position = new Vec2(100, 400);
-            entity.scale = 200f;
-            int width = 450;
-            int height = 150;
-            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height);
-            renderablePolygon.zOrder = 99;
-            renderablePolygon.color = Color.BLACK;
-            coordinator.addComponent(entity, renderablePolygon);
-            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity.position, false, width, height);
-            coordinator.addComponent(entity, physicsBody);
-            Log.d("Loading", entity.id + ": " + entity.signature.toString());
-        }
-
-        // wall
-        {
-            Entity entity = coordinator.createEntity();
-            entity.position = new Vec2(100, -200);
-            entity.scale = 200f;
-            int width = 450;
-            int height = 150;
-            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height);
-            renderablePolygon.zOrder = 99;
-            renderablePolygon.color = Color.BLACK;
-            coordinator.addComponent(entity, renderablePolygon);
-            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity.position, false, width, height);
-            coordinator.addComponent(entity, physicsBody);
-            Log.d("Loading", entity.id + ": " + entity.signature.toString());
-        }
-
-        // wall
-        {
-            Entity entity = coordinator.createEntity();
-            entity.position = new Vec2(-200, 100);
-            entity.scale = 200f;
-            int width = 150;
-            int height = 450;
-            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height);
-            renderablePolygon.zOrder = 99;
-            renderablePolygon.color = Color.BLACK;
-            coordinator.addComponent(entity, renderablePolygon);
-            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity.position, false, width, height);
-            coordinator.addComponent(entity, physicsBody);
-            Log.d("Loading", entity.id + ": " + entity.signature.toString());
-        }
-
-        // wall
-        {
-            Entity entity = coordinator.createEntity();
-            entity.position = new Vec2(400, 100);
-            entity.scale = 200f;
-            int width = 150;
-            int height = 450;
-            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height);
-            renderablePolygon.zOrder = 99;
-            renderablePolygon.color = Color.BLACK;
-            coordinator.addComponent(entity, renderablePolygon);
-            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity.position, false, width, height);
-            coordinator.addComponent(entity, physicsBody);
-            Log.d("Loading", entity.id + ": " + entity.signature.toString());
-        }
+        // generate walls
+        WorldObjectGenerator.generateWall(coordinator, physicsSystem, new Vec2(10, 13), 4, 1, 99);
+        WorldObjectGenerator.generateWall(coordinator, physicsSystem, new Vec2(10, 7), 4, 1, 99);
+        WorldObjectGenerator.generateWall(coordinator, physicsSystem, new Vec2(7, 10), 1, 4, 99);
+        WorldObjectGenerator.generateWall(coordinator, physicsSystem, new Vec2(13, 10), 1, 4, 99);
 
         {
             Entity entity = coordinator.createEntity();

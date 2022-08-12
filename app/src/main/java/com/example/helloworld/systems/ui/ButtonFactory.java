@@ -3,6 +3,7 @@ package com.example.helloworld.systems.ui;
 import android.util.Log;
 import com.example.helloworld.components.Ui;
 import com.example.helloworld.components.renderable.Renderable;
+import com.example.helloworld.core.CoordinateSystem;
 import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
 import com.example.helloworld.systems.render.PolygonFactory;
@@ -12,7 +13,7 @@ public class ButtonFactory {
     public static Entity createRectangularButton(Coordinator coordinator, RectangularButtonInfo buttonInfo){
         Entity newButton = coordinator.createEntity();
         newButton.position = buttonInfo.center;
-        Renderable renderablePolygon = PolygonFactory.generateRectangle(buttonInfo.width, buttonInfo.height);
+        Renderable renderablePolygon = PolygonFactory.generateRectangle(buttonInfo.width, buttonInfo.height, CoordinateSystem.SCREEN);
         renderablePolygon.zOrder = buttonInfo.zOrder;
         renderablePolygon.color = buttonInfo.color;
         renderablePolygon.isScreenElement = true;

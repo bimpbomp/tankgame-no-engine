@@ -1,5 +1,6 @@
 package com.example.helloworld.systems;
 
+import android.util.Log;
 import com.example.helloworld.components.PhysicsBody;
 import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
@@ -35,14 +36,14 @@ public class PhysicsSystem extends GameSystem {
         Body body =  world.createBody(bd);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width/100f, height/100f);
+        shape.setAsBox(width / 2f, height / 2f);
 
         //define fixture of the body.
         FixtureDef fd = new FixtureDef();
         fd.shape = shape;
         fd.density = 0.5f;
         fd.friction = 0.3f;
-        fd.restitution = 0.5f;
+        fd.restitution = 0.8f;
         body.createFixture(fd);
 
         physicsBody.body = body;

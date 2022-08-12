@@ -24,6 +24,8 @@ public class RenderSystem extends GameSystem {
     private boolean entitiesAdded;
     private Canvas canvas;
     private Camera camera;
+    // zoom in/out
+    public static final int WORLD_TO_SCREEN_SCALE_FACTOR = 100;
 
     public RenderSystem(Coordinator coordinator, GameSurface gameSurface) {
         super(coordinator);
@@ -110,8 +112,8 @@ public class RenderSystem extends GameSystem {
             return entity.position;
         }else {
             return new Vec2(
-                    entity.position.x - (camera.entity.position.x - camera.viewport.width / 2f),
-                    entity.position.y - (camera.entity.position.y - camera.viewport.height / 2f)
+                    entity.position.x * WORLD_TO_SCREEN_SCALE_FACTOR - (camera.entity.position.x * WORLD_TO_SCREEN_SCALE_FACTOR - camera.viewport.width / 2f),
+                    entity.position.y * WORLD_TO_SCREEN_SCALE_FACTOR - (camera.entity.position.y * WORLD_TO_SCREEN_SCALE_FACTOR - camera.viewport.height / 2f)
             );
         }
     }

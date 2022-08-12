@@ -124,7 +124,7 @@ public class UiSystem extends GameSystem implements ISubscriber {
                 new Vec2(dpadCenter.x - dpadSize / 3f, dpadCenter.y),
                 dpadSize / 3,
                 dpadSize / 3,
-                100,
+                1,
                 Color.YELLOW,
                 () -> {
                     //Log.d("UI", "left button onActivate");
@@ -143,7 +143,7 @@ public class UiSystem extends GameSystem implements ISubscriber {
                 new Vec2(dpadCenter.x, dpadCenter.y - dpadSize / 3f),
                 dpadSize / 3,
                 dpadSize / 3,
-                100,
+                1,
                 Color.BLUE,
                 () -> {
                     Log.d("UI", "up button onActivate");
@@ -162,7 +162,7 @@ public class UiSystem extends GameSystem implements ISubscriber {
                 new Vec2(dpadCenter.x, dpadCenter.y + dpadSize / 3f),
                 dpadSize / 3,
                 dpadSize / 3,
-                100,
+                1,
                 Color.GREEN,
                 () -> {
                     Log.d("UI", "down button onActivate");
@@ -181,7 +181,7 @@ public class UiSystem extends GameSystem implements ISubscriber {
                 new Vec2(dpadCenter.x + dpadSize / 3f, dpadCenter.y),
                 dpadSize / 3,
                 dpadSize / 3,
-                100,
+                1,
                 Color.RED,
                 () -> {
                     Log.d("UI", "right button onActivate");

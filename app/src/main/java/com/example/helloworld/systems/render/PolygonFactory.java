@@ -2,6 +2,7 @@ package com.example.helloworld.systems.render;
 
 import com.example.helloworld.components.renderable.Renderable;
 import com.example.helloworld.components.renderable.RenderableType;
+import com.example.helloworld.core.CoordinateSystem;
 import org.jbox2d.common.Vec2;
 
 import java.util.ArrayList;
@@ -9,21 +10,29 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PolygonFactory {
-    public static Renderable generateRectangle(int width, int height){
+    public static Renderable generateRectangle(int width, int height, CoordinateSystem coordinateSystem){
+        int w = width;
+        int h = height;
+
+        if (coordinateSystem == CoordinateSystem.WORLD){
+            w *= RenderSystem.WORLD_TO_SCREEN_SCALE_FACTOR;
+            h *= RenderSystem.WORLD_TO_SCREEN_SCALE_FACTOR;
+        }
+
         Renderable renderablePolygon = new Renderable();
         renderablePolygon.vertices = new ArrayList<>(Arrays.asList(
                 new Vec2(0, 0),
-                new Vec2(width, 0),
-                new Vec2(width, height),
-                new Vec2(0, height)
+                new Vec2(w, 0),
+                new Vec2(w, h),
+                new Vec2(0, h)
         ));;
-        renderablePolygon.center = new Vec2(width / 2f, height / 2f);
+        renderablePolygon.center = new Vec2(w / 2f, h / 2f);
         renderablePolygon.type = RenderableType.POLYGON;
         generateVertexVectors(renderablePolygon);
         return renderablePolygon;
     }
 
-    public static Renderable generateTriangle(int baseWidth, int height){
+    public static Renderable generateTriangle(int baseWidth, int height, CoordinateSystem coordinateSystem){
         Renderable renderablePolygon = new Renderable();
         List<Vec2> vertices = new ArrayList<>(Arrays.asList(
                 new Vec2(baseWidth / 2f, 0),
