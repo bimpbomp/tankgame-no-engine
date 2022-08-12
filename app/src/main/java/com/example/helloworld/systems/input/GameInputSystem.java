@@ -1,13 +1,11 @@
 package com.example.helloworld.systems.input;
 
-import android.util.Log;
 import com.example.helloworld.components.Ui;
+import com.example.helloworld.core.ecs.Component;
 import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
 import com.example.helloworld.core.ecs.GameSystem;
 import com.example.helloworld.core.observer.*;
-import com.example.helloworld.systems.ui.UiContextChangeEvent;
-import com.example.helloworld.systems.ui.UiContextState;
 import org.jbox2d.common.Vec2;
 
 import java.util.Queue;
@@ -19,10 +17,12 @@ public class GameInputSystem extends GameSystem implements ISubscriber {
 
     public GameInputSystem(Coordinator coordinator) {
         super(coordinator);
+        signature.set(Component.getType(Ui.class));
+
         inputBuffer = new ConcurrentLinkedDeque<>();
         this.publisher = new Publisher();
         PublisherHub.getInstance().addPublisher(GameEventType.UI_CONTEXT_CHANGE, publisher);
-        PublisherHub.getInstance().subscribe(GameEventType.SYSTEM_INPUT_EVENT, this);
+        PublisherHub.getInstance().subscribe(GameEventType.SYSTEM_INPUT, this);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class GameInputSystem extends GameSystem implements ISubscriber {
             for (Entity entity : entities){
                 Ui uiComponent = (Ui) coordinator.getComponent(entity, Ui.class);
 
-                switch (event.systemInputEventType){
+                switch (event.systemInputType){
 
                     case POINTER_UP:
                         if (uiComponent.pointerId == eventId) {

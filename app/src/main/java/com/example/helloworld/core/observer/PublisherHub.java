@@ -13,6 +13,12 @@ public class PublisherHub {
         publishers = new HashMap<>();
     }
 
+    public Publisher createNewPublisher(GameEventType gameEventType){
+        Publisher publisher = new Publisher();
+        addPublisher(gameEventType, publisher);
+        return publisher;
+    }
+
     public void addPublisher(GameEventType gameEventType, Publisher publisher){
         if (publishers.containsKey(gameEventType)){
             publishers.get(gameEventType).forEach(existingPublisher -> publisher.addSubscriber(existingPublisher.getSubscribers()));

@@ -8,15 +8,19 @@ import android.util.Log;
 import com.example.helloworld.components.*;
 import com.example.helloworld.components.renderable.Renderable;
 import com.example.helloworld.components.renderable.RenderableType;
+import com.example.helloworld.core.ecs.Component;
 import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
 import com.example.helloworld.core.ecs.GameSystem;
 import com.example.helloworld.core.android.GameSurface;
+import com.example.helloworld.core.observer.GameEvent;
+import com.example.helloworld.core.observer.GameEventType;
+import com.example.helloworld.core.observer.ISubscriber;
 import org.jbox2d.common.Vec2;
 
 import java.util.*;
 
-public class RenderSystem extends GameSystem {
+public class RenderSystem extends GameSystem implements ISubscriber {
     private final List<SortableRenderable> sortedEntities;
     private final Set<Entity> newEntities;
     private final GameSurface gameSurface;
@@ -29,6 +33,8 @@ public class RenderSystem extends GameSystem {
 
     public RenderSystem(Coordinator coordinator, GameSurface gameSurface) {
         super(coordinator);
+        signature.set(Component.getType(Renderable.class));
+
         this.sortedEntities = new ArrayList<>();
         this.newEntities = new HashSet<>();
         this.gameSurface = gameSurface;
@@ -132,7 +138,7 @@ public class RenderSystem extends GameSystem {
         entitiesAdded = false;
     }
 
-    public void setViewport(Entity entity) {
+    private void setViewport(Entity entity) {
         this.camera = new Camera();
         this.camera.entity = entity;
         this.camera.viewport = (Viewport) coordinator.getComponent(entity, Viewport.class);
@@ -156,6 +162,13 @@ public class RenderSystem extends GameSystem {
 
         newEntities.add(entity);
         entitiesAdded = true;
+    }
+
+    @Override
+    public void onNotify(GameEvent event) {
+        if (event.getEventType() == GameEventType.VIEWPORT_CHANGE){
+            this.setViewport(((ViewportChangeEvent) event).viewport);
+        }
     }
 
     private static class SortableRenderable implements Comparable<SortableRenderable>{

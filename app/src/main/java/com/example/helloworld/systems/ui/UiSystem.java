@@ -3,7 +3,9 @@ package com.example.helloworld.systems.ui;
 import android.graphics.Color;
 import android.util.Log;
 import com.example.helloworld.components.TankInput;
+import com.example.helloworld.components.Ui;
 import com.example.helloworld.components.Viewport;
+import com.example.helloworld.core.ecs.Component;
 import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
 import com.example.helloworld.core.ecs.GameSystem;
@@ -25,6 +27,8 @@ public class UiSystem extends GameSystem implements ISubscriber {
 
     public UiSystem(Coordinator coordinator) {
         super(coordinator);
+        signature.set(Component.getType(Ui.class));
+
         stateChangeNeeded = true;
         newState = UiContextState.LEVEL;
         currentState = UiContextState.NONE;

@@ -1,150 +1,64 @@
 package com.example.helloworld.core;
 
-import android.graphics.Color;
 import android.util.Log;
-import com.example.helloworld.WorldObjectGenerator;
-import com.example.helloworld.components.Ui;
+import com.example.helloworld.components.PhysicsComponent;
 import com.example.helloworld.components.TankInput;
+import com.example.helloworld.components.Ui;
+import com.example.helloworld.components.Viewport;
 import com.example.helloworld.components.renderable.Renderable;
 import com.example.helloworld.core.android.GameSurface;
-import com.example.helloworld.components.PhysicsBody;
-import com.example.helloworld.components.Viewport;
-import com.example.helloworld.core.android.EventLogger;
 import com.example.helloworld.core.ecs.Component;
 import com.example.helloworld.core.ecs.Coordinator;
-import com.example.helloworld.core.ecs.Entity;
-import com.example.helloworld.core.ecs.Signature;
-import com.example.helloworld.systems.PhysicsSystem;
-import com.example.helloworld.systems.TankMovementSystem;
+import com.example.helloworld.core.ecs.GameSystem;
 import com.example.helloworld.systems.input.GameInputSystem;
-import com.example.helloworld.systems.render.PolygonFactory;
+import com.example.helloworld.systems.level.LevelSystem;
+import com.example.helloworld.systems.movement.TankMovementSystem;
+import com.example.helloworld.systems.physics.PhysicsSystem;
 import com.example.helloworld.systems.render.RenderSystem;
-import com.example.helloworld.systems.ViewportSystem;
 import com.example.helloworld.systems.ui.UiSystem;
-import org.jbox2d.common.Vec2;
+import com.example.helloworld.systems.viewport.ViewportSystem;
 
-// Loop taken from: https://dewitters.com/dewitters-gameloop/
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class Loop implements Runnable {
+    private boolean gameIsRunning;
     private Coordinator coordinator;
     private RenderSystem renderSystem;
-    private PhysicsSystem physicsSystem;
-    private ViewportSystem viewportSystem;
-    private GameInputSystem gameInputSystem;
-    private UiSystem uiSystem;
-    private TankMovementSystem tankMovementSystem;
-    private EventLogger eventLogger;
-    private boolean gameIsRunning;
+    private List<OrderedGameSystem> systems;
+    public int nextSystemPriority;
 
     public Loop() {
+        gameIsRunning = false;
     }
 
     public void initialiseGame(GameSurface gameSurface) {
-        //eventLogger = new EventLogger();
         coordinator = new Coordinator();
+        systems = new ArrayList<>();
+        nextSystemPriority = 0;
 
-        coordinator.registerComponentType(Component.getType(PhysicsBody.class));
-        Log.d("Loading", "PhysicsBody id: " + Component.getType(PhysicsBody.class));
-        coordinator.registerComponentType(Component.getType(Renderable.class));
-        Log.d("Loading", "Renderable id: " + Component.getType(Renderable.class));
-        coordinator.registerComponentType(Component.getType(Viewport.class));
-        Log.d("Loading", "Viewport id: " + Component.getType(Viewport.class));
-        coordinator.registerComponentType(Component.getType(Ui.class));
-        Log.d("Loading", "Ui id: " + Component.getType(Ui.class));
-        coordinator.registerComponentType(Component.getType(TankInput.class));
-        Log.d("Loading", "UiControllable id: " + Component.getType(TankInput.class));
+        // register component types
+        registerNewComponentType(PhysicsComponent.class);
+        registerNewComponentType(Renderable.class);
+        registerNewComponentType(Viewport.class);
+        registerNewComponentType(Ui.class);
+        registerNewComponentType(TankInput.class);
 
-        {
-            renderSystem = new RenderSystem(coordinator, gameSurface);
-            coordinator.registerSystem(renderSystem);
-            Signature signature = new Signature();
-            signature.set(Component.getType(Renderable.class));
-            renderSystem.setSignature(signature);
-        }
+        // register render system - treated differently as it's executed differently
+        renderSystem = new RenderSystem(coordinator, gameSurface);
+        coordinator.registerSystem(renderSystem);
 
-        {
-            physicsSystem = new PhysicsSystem(coordinator);
-            coordinator.registerSystem(physicsSystem);
-            Signature signature = new Signature();
-            signature.set(Component.getType(PhysicsBody.class));
-            physicsSystem.setSignature(signature);
-        }
-
-        {
-            viewportSystem = new ViewportSystem(coordinator);
-            coordinator.registerSystem(viewportSystem);
-            Signature signature = new Signature();
-            signature.set(Component.getType(Viewport.class));
-            viewportSystem.setSignature(signature);
-        }
-
-        {
-            gameInputSystem = new GameInputSystem(coordinator);
-            coordinator.registerSystem(gameInputSystem);
-            Signature signature = new Signature();
-            signature.set(Component.getType(Ui.class));
-            gameInputSystem.setSignature(signature);
-        }
-
-        {
-            uiSystem = new UiSystem(coordinator);
-            coordinator.registerSystem(uiSystem);
-            Signature signature = new Signature();
-            signature.set(Component.getType(Ui.class));
-            uiSystem.setSignature(signature);
-        }
-
-        {
-            tankMovementSystem = new TankMovementSystem(coordinator);
-            coordinator.registerSystem(tankMovementSystem);
-            Signature signature = new Signature();
-            signature.set(Component.getType(TankInput.class));
-            signature.set(Component.getType(PhysicsBody.class));
-            tankMovementSystem.setSignature(signature);
-        }
-
-        // player
-        {
-            Entity entity = coordinator.createEntity();
-            entity.position = new Vec2(10, 10);
-            int width = 1;
-            int height = 1;
-            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height, CoordinateSystem.WORLD);
-            renderablePolygon.zOrder = 99;
-            renderablePolygon.color = Color.GREEN;
-            coordinator.addComponent(entity, renderablePolygon);
-            PhysicsBody physicsBody = physicsSystem.createPhysicsBody(entity.position, true, width, height);
-            coordinator.addComponent(entity, physicsBody);
-
-            TankInput tankInput = new TankInput();
-            coordinator.addComponent(entity, tankInput);
-
-            coordinator.setPlayer(entity);
-            uiSystem.setControlledTankInput(tankInput);
-            Log.d("Loading", entity.id + "(player): " + entity.signature.toString());
-        }
-
-        // generate walls
-        WorldObjectGenerator.generateWall(coordinator, physicsSystem, new Vec2(10, 13), 4, 1, 99);
-        WorldObjectGenerator.generateWall(coordinator, physicsSystem, new Vec2(10, 7), 4, 1, 99);
-        WorldObjectGenerator.generateWall(coordinator, physicsSystem, new Vec2(7, 10), 1, 4, 99);
-        WorldObjectGenerator.generateWall(coordinator, physicsSystem, new Vec2(13, 10), 1, 4, 99);
-
-        {
-            Entity entity = coordinator.createEntity();
-            entity.position = new Vec2(0, 0);
-            Viewport viewport = new Viewport();
-            viewport.entityFocussedOn = coordinator.getPlayer();
-            Log.d("Loading", "Screen width " + gameSurface.getWidth() + " height " + gameSurface.getHeight());
-            viewport.width = gameSurface.getWidth();
-            viewport.height = gameSurface.getHeight();
-            coordinator.addComponent(entity, viewport);
-            renderSystem.setViewport(entity);
-
-            coordinator.setPlayerViewport(entity);
-            Log.d("Loading", entity.id + ": " + entity.signature.toString());
-        }
+        //register other systems in decreasing priority order
+        registerNewSystem(new GameInputSystem(coordinator));
+        registerNewSystem(new UiSystem(coordinator));
+        registerNewSystem(new LevelSystem(coordinator));
+        registerNewSystem(new TankMovementSystem(coordinator));
+        registerNewSystem(new PhysicsSystem(coordinator));
+        registerNewSystem(new ViewportSystem(coordinator));
     }
 
+    // Loop taken from: https://dewitters.com/dewitters-gameloop/
     @Override
     public void run() {
         int TICKS_PER_SECOND = 25;
@@ -173,14 +87,37 @@ public class Loop implements Runnable {
     }
 
     public void updateGame(float delta){
-        gameInputSystem.update(delta);
-        uiSystem.update(delta);
-        tankMovementSystem.update(delta);
-        physicsSystem.update(delta);
-        viewportSystem.update(delta);
+        systems.forEach(orderedGameSystem -> orderedGameSystem.system.update(delta));
+    }
+
+    private void registerNewComponentType(Class clazz){
+        coordinator.registerComponentType(Component.getType(clazz));
+        Log.d("Loading", "New component type '" + clazz.getSimpleName() + "' id: " + Component.getType(clazz));
+    }
+
+    private void registerNewSystem(GameSystem system){
+        coordinator.registerSystem(system);
+        systems.add(new OrderedGameSystem(nextSystemPriority++, system));
+        Collections.sort(systems);
+        Log.d("Loading", "New system type '" + system.getClass().getSimpleName());
     }
 
     public void setGameIsRunning(boolean isRunning){
         this.gameIsRunning = isRunning;
+    }
+
+    private static class OrderedGameSystem implements Comparable<OrderedGameSystem>{
+        public int priority;
+        public GameSystem system;
+
+        public OrderedGameSystem(int priority, GameSystem system) {
+            this.priority = priority;
+            this.system = system;
+        }
+
+        @Override
+        public int compareTo(OrderedGameSystem orderedGameSystem) {
+            return Integer.compare(priority, orderedGameSystem.priority);
+        }
     }
 }

@@ -10,7 +10,7 @@ import java.util.Set;
 public abstract class GameSystem {
     private static final Map<String, Integer> systemTypes = new HashMap<>();
     private static int nextSystemCounter = 0;
-    private Signature signature;
+    protected final Signature signature;
     protected Set<Entity> entities;
     protected final Coordinator coordinator;
 
@@ -18,10 +18,6 @@ public abstract class GameSystem {
         signature = new Signature();
         entities = new HashSet<>();
         this.coordinator = coordinator;
-    }
-
-    public void setSignature(Signature signature){
-        this.signature = signature;
     }
 
     public void removeEntity(Entity entity){

@@ -1,6 +1,6 @@
 package com.example.helloworld.systems.input;
 
-public enum SystemInputEventType {
+public enum SystemInputType {
     POINTER_UP,
     POINTER_DOWN,
     POINTER_MOVE
