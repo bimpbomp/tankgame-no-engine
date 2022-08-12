@@ -17,15 +17,19 @@ public class TankMovementSystem extends GameSystem {
     }
 
     @Override
+    public void init() {
+
+    }
+
+    @Override
     public void update(float delta) {
         for (Entity entity : entities){
             TankInput tankInput = (TankInput) coordinator.getComponent(entity, TankInput.class);
             PhysicsComponent physicsComponent = (PhysicsComponent) coordinator.getComponent(entity, PhysicsComponent.class);
 
-            Vec2 force = tankInput.movementVector.mul(10f);
-            if (force.x != 0f && force.y != 0f)
-                Log.d("Physics", "Applying force: " + force);
-            physicsComponent.body.applyForceToCenter(force);
+            Vec2 force = tankInput.movementVector.mul(1f);
+            if (physicsComponent.body.m_linearVelocity.length() < 10f)
+                physicsComponent.body.applyForceToCenter(force);
         }
     }
 }

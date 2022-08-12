@@ -39,6 +39,8 @@ public abstract class GameSystem {
             removeEntity(entity);
     }
 
+    public abstract void init();
+
     public abstract void update(float delta);
 
     public int getType(){

@@ -13,12 +13,13 @@ public class ViewportSystem extends GameSystem {
     }
 
     @Override
-    public void update(float delta) {
-        for (Entity entity : entities){
-            Viewport viewport = (Viewport) coordinator.getComponent(entity, Viewport.class);
-            Entity focussedEntity = viewport.entityFocussedOn;
+    public void init() {
 
-            entity.position.set(focussedEntity.position);
-        }
+    }
+
+    @Override
+    public void update(float delta) {
+        Entity playerViewport = coordinator.getPlayerViewport();
+        playerViewport.position.set(coordinator.getPlayer().position);
     }
 }

@@ -38,6 +38,11 @@ public class UiSystem extends GameSystem implements ISubscriber {
     }
 
     @Override
+    public void init() {
+
+    }
+
+    @Override
     public void update(float delta) {
         if (stateChangeNeeded){
             Log.d("UI", "Changing UI state from " + currentState.name() + " to " + newState.name());
@@ -91,7 +96,6 @@ public class UiSystem extends GameSystem implements ISubscriber {
 
                     playerMovementInput.set(x, y);
                     playerMovementInput.normalize();
-                    Log.d("Physics", "input vector: " + playerMovementInput);
                     tankInput.movementVector = playerMovementInput;
                     break;
                 case PAUSE_MENU:
@@ -120,6 +124,7 @@ public class UiSystem extends GameSystem implements ISubscriber {
         clearCurrentUi();
         Entity playerViewportEntity = coordinator.getPlayerViewport();
         Viewport viewport = (Viewport) coordinator.getComponent(playerViewportEntity, Viewport.class);
+        tankInput = (TankInput) coordinator.getComponent(coordinator.getPlayer(), TankInput.class);
 
         Vec2 dpadCenter = new Vec2(300, viewport.height - 300);
         int dpadSize = 300;
@@ -211,9 +216,5 @@ public class UiSystem extends GameSystem implements ISubscriber {
 
     private void changeToMainMenuUi(){
         clearCurrentUi();
-    }
-
-    public void setControlledTankInput(TankInput controlledTankInput) {
-        this.tankInput = controlledTankInput;
     }
 }

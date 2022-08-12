@@ -20,6 +20,11 @@ public class PhysicsSystem extends GameSystem {
         world = new World(gravity);
     }
 
+    @Override
+    public void init() {
+
+    }
+
     public void update(float delta){
         world.step(delta, velocityIterations, positionIterations);
 
@@ -41,8 +46,11 @@ public class PhysicsSystem extends GameSystem {
 
     @Override
     public void removeEntity(Entity entity) {
+        if (entities.contains(entity)) {
+            PhysicsComponent physicsComponent = (PhysicsComponent) coordinator.getComponent(entity, PhysicsComponent.class);
+            world.destroyBody(physicsComponent.body);
+        }
+
         super.removeEntity(entity);
-        PhysicsComponent physicsComponent = (PhysicsComponent) coordinator.getComponent(entity, PhysicsComponent.class);
-        world.destroyBody(physicsComponent.body);
     }
 }

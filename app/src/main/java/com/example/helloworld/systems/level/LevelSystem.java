@@ -23,8 +23,13 @@ public class LevelSystem extends GameSystem implements ISubscriber {
     public LevelSystem(Coordinator coordinator) {
         super(coordinator);
         PublisherHub.getInstance().subscribe(GameEventType.LEVEL_CHANGE, this);
-        needToLoad = false;
+        needToLoad = true;
         this.viewportEventPublisher = PublisherHub.getInstance().createNewPublisher(GameEventType.VIEWPORT_CHANGE);
+    }
+
+    @Override
+    public void init() {
+
     }
 
     @Override
@@ -32,57 +37,28 @@ public class LevelSystem extends GameSystem implements ISubscriber {
         if (needToLoad){
             unloadCurrentLevel();
             loadNewLevel();
+            needToLoad = false;
         }
     }
 
     @Override
     public void onNotify(GameEvent event) {
-        needToLoad = true;
+        if (event.getEventType() == GameEventType.LEVEL_CHANGE)
+            needToLoad = true;
     }
 
     private void loadNewLevel(){
         // player
-        {
-            Entity entity = coordinator.createEntity();
-            entity.position = new Vec2(10, 10);
-            int width = 1;
-            int height = 1;
-            Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height, CoordinateSystem.WORLD);
-            renderablePolygon.zOrder = 99;
-            renderablePolygon.color = Color.GREEN;
-            coordinator.addComponent(entity, renderablePolygon);
-            PhysicsComponent physicsComponent = PhysicsBodyGenerator.createPhysicsBody(entity.position, true, width, height);
-            coordinator.addComponent(entity, physicsComponent);
-
-            TankInput tankInput = new TankInput();
-            coordinator.addComponent(entity, tankInput);
-
-            coordinator.setPlayer(entity);
-            uiSystem.setControlledTankInput(tankInput);
-            Log.d("Loading", entity.id + "(player): " + entity.signature.toString());
-        }
-
-        // player viewport
-        {
-            Entity entity = coordinator.createEntity();
-            entity.position = new Vec2(0, 0);
-            Viewport viewport = new Viewport();
-            viewport.entityFocussedOn = coordinator.getPlayer();
-            Log.d("Loading", "Screen width " + gameSurface.getWidth() + " height " + gameSurface.getHeight());
-            viewport.width = gameSurface.getWidth();
-            viewport.height = gameSurface.getHeight();
-            coordinator.addComponent(entity, viewport);
-            viewportEventPublisher.notify(new ViewportChangeEvent(entity));
-
-            coordinator.setPlayerViewport(entity);
-            Log.d("Loading", entity.id + ": " + entity.signature.toString());
-        }
+        Entity player = WorldObjectGenerator.generateTank(coordinator, new Vec2(10, 10), 1, 1, 99, Color.GREEN);
+        coordinator.setPlayer(player);
 
         // generate walls
         WorldObjectGenerator.generateWall(coordinator, new Vec2(10, 13), 4, 1, 99);
         WorldObjectGenerator.generateWall(coordinator, new Vec2(10, 7), 4, 1, 99);
         WorldObjectGenerator.generateWall(coordinator, new Vec2(7, 10), 1, 4, 99);
         WorldObjectGenerator.generateWall(coordinator, new Vec2(13, 10), 1, 4, 99);
+
+        Log.d("Loading", "New level loaded");
     }
 
     private void unloadCurrentLevel(){

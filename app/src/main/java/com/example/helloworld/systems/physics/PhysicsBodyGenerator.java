@@ -28,7 +28,7 @@ public class PhysicsBodyGenerator {
         fd.shape = shape;
         fd.density = 0.5f;
         fd.friction = 0.3f;
-        fd.restitution = 0.8f;
+        fd.restitution = 0.1f;
 
         physicsComponent.bodyDef = bd;
         physicsComponent.fixtureDef = fd;

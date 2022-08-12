@@ -43,10 +43,31 @@ public class RenderSystem extends GameSystem implements ISubscriber {
     }
 
     @Override
-    public void update(float delta) {
-        if (entitiesAdded){
-            processNewEntities();
+    public void init(){
+        // player viewport
+        {
+            Entity entity = coordinator.createEntity();
+            entity.position = new Vec2(0, 0);
+            Viewport viewport = new Viewport();
+            Log.d("Loading", "Screen width " + gameSurface.getWidth() + " height " + gameSurface.getHeight());
+            viewport.width = gameSurface.getWidth();
+            viewport.height = gameSurface.getHeight();
+            coordinator.addComponent(entity, viewport);
+
+            setViewport(entity);
+
+            coordinator.setPlayerViewport(entity);
+            Log.d("Loading", "viewport: " + entity.id + ": " + entity.signature.toString());
         }
+    }
+
+    @Override
+    public void update(float delta) {
+        if (camera == null)
+            return;
+
+        if (entitiesAdded)
+            processNewEntities();
 
         canvas = gameSurface.getHolder().lockCanvas();
         if (canvas != null){

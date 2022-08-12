@@ -26,6 +26,11 @@ public class GameInputSystem extends GameSystem implements ISubscriber {
     }
 
     @Override
+    public void init() {
+
+    }
+
+    @Override
     public void update(float delta) {
 
         SystemInputEvent event = inputBuffer.peek();

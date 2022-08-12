@@ -50,12 +50,18 @@ public class Loop implements Runnable {
         coordinator.registerSystem(renderSystem);
 
         //register other systems in decreasing priority order
-        registerNewSystem(new GameInputSystem(coordinator));
-        registerNewSystem(new UiSystem(coordinator));
-        registerNewSystem(new LevelSystem(coordinator));
+        registerNewSystem(new LevelSystem(coordinator)); // creates player
+        registerNewSystem(new GameInputSystem(coordinator)); // gets inputs for UI and TankMovement systems
+        registerNewSystem(new UiSystem(coordinator)); // needs player to exists
         registerNewSystem(new TankMovementSystem(coordinator));
         registerNewSystem(new PhysicsSystem(coordinator));
         registerNewSystem(new ViewportSystem(coordinator));
+
+        renderSystem.init();
+        systems.forEach(orderedGameSystem -> {
+            Log.d("Loading", "Initialising system: " + orderedGameSystem.system.getClass().getSimpleName());
+            orderedGameSystem.system.init();
+        });
     }
 
     // Loop taken from: https://dewitters.com/dewitters-gameloop/
