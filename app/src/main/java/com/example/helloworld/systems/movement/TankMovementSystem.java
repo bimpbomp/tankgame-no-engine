@@ -45,26 +45,24 @@ public class TankMovementSystem extends GameSystem {
 
         if (tankInput.movementVector.length() > 0) {
             // todo test the rotate function works
-            Vec2 forwardVector = VectorUtils.rotate(new Vec2(0, -1), entity.angle);
-            float angle = VectorUtils.angle(forwardVector, tankInput.movementVector);
+            //Vec2 forwardVector = VectorUtils.rotate(new Vec2(0, -1), entity.angle);
+            Vec2 forwardVector = new Vec2((float) Math.cos(entity.angle * Math.PI / 180), (float) Math.sin(entity.angle * Math.PI / 180));
 
-            Vec2 leftForce = new Vec2(forwardVector);
-            Vec2 rightForce = new Vec2(forwardVector);
+            physicsComponent.body.applyForceToCenter(forwardVector.mul(tankInput.movementVector.y * -30));
+            Log.d("movement", "input: " + tankInput.movementVector);
 
-            if (angle > -45 && angle < 45){
-                // do nothing, go straight on
-            } else if (angle <= -45 && angle > -135){
+            Vec2 leftForce = new Vec2();
+            Vec2 rightForce = new Vec2();
+
+            float turnVel = 10f;
+            if (tankInput.movementVector.x > 0){
                 // turn right
-                rightForce = rightForce.mul(-1f);
-            } else if (angle <= -135 || angle > 135){
-                // reverse
-                leftForce = leftForce.mul(-1f);
-                rightForce = rightForce.mul(-1f);
-            } else if (angle >= 45 && angle < 135){
+                leftForce = forwardVector.mul(turnVel);
+                rightForce = forwardVector.mul(-1 * turnVel);
+            } else if (tankInput.movementVector.x < 0){
                 // turn left
-                leftForce = leftForce.mul(-1f);
-            } else {
-                Log.d("movement", "shouldnt happen");
+                leftForce = forwardVector.mul(-1f * turnVel);
+                rightForce = forwardVector.mul(turnVel);
             }
 
             Vec2 leftTurningPoint = calculateLeftTurnPoint(forwardVector, entity.position, physicsComponent.width);
@@ -76,7 +74,8 @@ public class TankMovementSystem extends GameSystem {
             killOrthogonalVelocity(physicsComponent.body);
 
         } else {
-            physicsComponent.body.setAngularDamping(1f);
+            physicsComponent.body.setLinearDamping(10f);
+            physicsComponent.body.setAngularDamping(10f);
         }
     }
 

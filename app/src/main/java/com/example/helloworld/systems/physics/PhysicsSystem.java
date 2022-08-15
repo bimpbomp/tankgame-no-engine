@@ -35,7 +35,7 @@ public class PhysicsSystem extends GameSystem {
             entity.position = physicsComponent.body.getPosition();
             entity.angle = physicsComponent.body.getAngle();
 
-            Log.d("movement", "ang: " + physicsComponent.body.getAngle() + " angvel: " + physicsComponent.body.getAngularVelocity());
+            Log.d("angularmovement", "ang: " + physicsComponent.body.getAngle() + " angvel: " + physicsComponent.body.getAngularVelocity());
 
         }
     }
