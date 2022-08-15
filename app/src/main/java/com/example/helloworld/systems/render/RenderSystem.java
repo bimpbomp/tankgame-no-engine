@@ -1,9 +1,6 @@
 package com.example.helloworld.systems.render;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.graphics.*;
 import android.util.Log;
 import com.example.helloworld.components.*;
 import com.example.helloworld.components.renderable.Renderable;
@@ -94,7 +91,7 @@ public class RenderSystem extends GameSystem implements ISubscriber {
                         renderText(screenCoordinates, sortableRenderable.renderable);
                         break;
                     case SPRITE:
-                        renderSprite(screenCoordinates, sortableRenderable.renderable);
+                        renderSprite(screenCoordinates, sortableRenderable);
                         break;
                 }
             }
@@ -133,9 +130,14 @@ public class RenderSystem extends GameSystem implements ISubscriber {
         canvas.drawCircle(screenCoordinates.x, screenCoordinates.y, renderableCircle.radius, paint);
     }
 
-    public void renderSprite(Vec2 screenCoordinates, Renderable renderableSprite){
-        paint = new Paint();
-        canvas.drawBitmap(renderableSprite.sprite.bitmap, screenCoordinates.x - renderableSprite.sprite.centerXOffset, screenCoordinates.y - renderableSprite.sprite.centerXOffset, paint);
+    public void renderSprite(Vec2 screenCoordinates, SortableRenderable sortableRenderable){
+        Renderable renderable = sortableRenderable.renderable;
+        Entity entity = sortableRenderable.entity;
+        Matrix matrix = new Matrix();
+        matrix.postRotate(entity.angle, renderable.sprite.centerXOffset, renderable.sprite.centerYOffset);
+        matrix.postTranslate(screenCoordinates.x - renderable.sprite.centerXOffset, screenCoordinates.y - renderable.sprite.centerYOffset);
+        //canvas.drawBitmap(renderable.sprite.bitmap, screenCoordinates.x - renderable.sprite.centerXOffset, screenCoordinates.y - renderable.sprite.centerXOffset, paint);
+        canvas.drawBitmap(renderable.sprite.bitmap, matrix, paint);
         paint.setARGB(125, 255, 255, 255);
     }
 

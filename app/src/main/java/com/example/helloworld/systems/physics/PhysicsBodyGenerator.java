@@ -34,6 +34,9 @@ public class PhysicsBodyGenerator {
         physicsComponent.fixtureDef = fd;
         physicsComponent.shape = shape;
 
+        physicsComponent.width = width;
+        physicsComponent.height = height;
+
         return physicsComponent;
     }
 }

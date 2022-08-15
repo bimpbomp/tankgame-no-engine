@@ -28,8 +28,8 @@ public class WorldObjectGenerator {
         renderablePolygon.color = Color.BLACK;
         coordinator.addComponent(entity, renderablePolygon);
 
-        PhysicsComponent physicsComponent = PhysicsBodyGenerator.createPhysicsBody(entity.position, false, width, height);
-        coordinator.addComponent(entity, physicsComponent);
+//        PhysicsComponent physicsComponent = PhysicsBodyGenerator.createPhysicsBody(entity.position, false, width, height);
+//        coordinator.addComponent(entity, physicsComponent);
 
         Log.d("Loading", entity.id + " (wall): " + entity.signature.toString());
 

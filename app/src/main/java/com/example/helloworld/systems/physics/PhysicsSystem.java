@@ -29,13 +29,14 @@ public class PhysicsSystem extends GameSystem {
     public void update(float delta){
         world.step(delta, velocityIterations, positionIterations);
 
-        Log.d("physics","Body count: " + world.getBodyCount());
-
         for (Entity entity : entities){
             PhysicsComponent physicsComponent = (PhysicsComponent) coordinator.getComponent(entity, PhysicsComponent.class);
 
             entity.position = physicsComponent.body.getPosition();
             entity.angle = physicsComponent.body.getAngle();
+
+            Log.d("movement", "ang: " + physicsComponent.body.getAngle() + " angvel: " + physicsComponent.body.getAngularVelocity());
+
         }
     }
 

@@ -7,7 +7,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 import com.example.helloworld.core.Loop;
-import com.example.helloworld.old.Point;
 import com.example.helloworld.systems.level.LoadedAssets;
 
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {

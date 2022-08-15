@@ -11,4 +11,6 @@ public class PhysicsComponent extends Component {
     public FixtureDef fixtureDef;
     public BodyDef bodyDef;
     public Body body;
+    public float width;
+    public float height;
 }

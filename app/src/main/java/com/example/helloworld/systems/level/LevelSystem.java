@@ -2,14 +2,12 @@ package com.example.helloworld.systems.level;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.util.Log;
 import com.example.helloworld.R;
 import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
 import com.example.helloworld.core.ecs.GameSystem;
 import com.example.helloworld.core.observer.*;
-import com.example.helloworld.systems.physics.PhysicsSystem;
 import com.example.helloworld.systems.render.RenderSystem;
 import com.example.helloworld.systems.render.Sprite;
 import org.jbox2d.common.Vec2;
