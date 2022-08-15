@@ -15,8 +15,8 @@ public class PolygonFactory {
         int h = height;
 
         if (coordinateSystem == CoordinateSystem.WORLD){
-            w *= RenderSystem.WORLD_TO_SCREEN_SCALE_FACTOR;
-            h *= RenderSystem.WORLD_TO_SCREEN_SCALE_FACTOR;
+            w *= RenderSystem.physicsUnitOnScreenSize;
+            h *= RenderSystem.physicsUnitOnScreenSize;
         }
 
         Renderable renderablePolygon = new Renderable();

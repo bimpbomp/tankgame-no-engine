@@ -6,4 +6,5 @@ public class Sprite {
     public Bitmap bitmap;
     public float centerXOffset;
     public float centerYOffset;
+    public float aspectRatio;
 }

@@ -9,6 +9,8 @@ import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
 import com.example.helloworld.core.ecs.GameSystem;
 import com.example.helloworld.core.observer.*;
+import com.example.helloworld.systems.physics.PhysicsSystem;
+import com.example.helloworld.systems.render.RenderSystem;
 import com.example.helloworld.systems.render.Sprite;
 import org.jbox2d.common.Vec2;
 
@@ -46,7 +48,7 @@ public class LevelSystem extends GameSystem implements ISubscriber {
         loadAssets();
 
         // player
-        Entity player = WorldObjectGenerator.generateTank(coordinator, new Vec2(10, 10), 1, 1, 99);
+        Entity player = WorldObjectGenerator.generateTank(coordinator, new Vec2(10, 10), 99);
         coordinator.setPlayer(player);
 
         // generate walls
@@ -54,16 +56,13 @@ public class LevelSystem extends GameSystem implements ISubscriber {
         WorldObjectGenerator.generateWall(coordinator, new Vec2(10, 7), 4, 1, 99);
         WorldObjectGenerator.generateWall(coordinator, new Vec2(7, 10), 1, 4, 99);
         WorldObjectGenerator.generateWall(coordinator, new Vec2(13, 10), 1, 4, 99);
-
-        Log.d("Loading", "New level loaded");
     }
 
     private void loadAssets(){
         LoadedAssets.getInstance().clear();
 
         Bitmap bitmap = BitmapFactory.decodeResource(LoadedAssets.getResources(), R.raw.body_tracks);
-        int scaleToUse = 10; // this will be our percentage
-        int sizeY = coordinator.getPlayerViewportComponent().height * scaleToUse / 100;
+        int sizeY = RenderSystem.physicsUnitOnScreenSize;
         int sizeX = bitmap.getWidth() * sizeY / bitmap.getHeight();
         Bitmap scaled = Bitmap.createScaledBitmap(bitmap, sizeX, sizeY, false);
 
@@ -72,6 +71,7 @@ public class LevelSystem extends GameSystem implements ISubscriber {
         sprite.centerXOffset = scaled.getWidth() / 2f;
         sprite.centerYOffset = scaled.getHeight() / 2f;
         sprite.bitmap = scaled;
+        sprite.aspectRatio = scaled.getWidth() / (float) scaled.getHeight();
 
         LoadedAssets.getInstance().add(R.raw.body_tracks + "", sprite);
     }

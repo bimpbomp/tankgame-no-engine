@@ -1,5 +1,6 @@
 package com.example.helloworld.systems.physics;
 
+import android.util.Log;
 import com.example.helloworld.components.PhysicsComponent;
 import com.example.helloworld.core.ecs.Component;
 import com.example.helloworld.core.ecs.Coordinator;
@@ -27,6 +28,8 @@ public class PhysicsSystem extends GameSystem {
 
     public void update(float delta){
         world.step(delta, velocityIterations, positionIterations);
+
+        Log.d("physics","Body count: " + world.getBodyCount());
 
         for (Entity entity : entities){
             PhysicsComponent physicsComponent = (PhysicsComponent) coordinator.getComponent(entity, PhysicsComponent.class);

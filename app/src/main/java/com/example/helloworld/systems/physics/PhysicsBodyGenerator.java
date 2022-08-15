@@ -8,7 +8,7 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
 public class PhysicsBodyGenerator {
-    public static PhysicsComponent createPhysicsBody(Vec2 position, boolean dynamic, int width, int height){
+    public static PhysicsComponent createPhysicsBody(Vec2 position, boolean dynamic, float width, float height){
         PhysicsComponent physicsComponent = new PhysicsComponent();
         //body definition
         BodyDef bd = new BodyDef();

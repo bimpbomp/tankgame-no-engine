@@ -28,7 +28,8 @@ public class RenderSystem extends GameSystem implements ISubscriber {
     private boolean entitiesAdded;
     private Canvas canvas;
     private Camera camera;
-    public static int WORLD_TO_SCREEN_SCALE_FACTOR;
+    // the size of one physics unit (1.0f) on the screen, in pixels.
+    public static int physicsUnitOnScreenSize;
 
     public RenderSystem(Coordinator coordinator, GameSurface gameSurface) {
         super(coordinator);
@@ -40,7 +41,7 @@ public class RenderSystem extends GameSystem implements ISubscriber {
         this.paint = new Paint();
         this.entitiesAdded = false;
 
-        WORLD_TO_SCREEN_SCALE_FACTOR = gameSurface.getHeight() / 10;
+        physicsUnitOnScreenSize = gameSurface.getHeight() / 10;
     }
 
     @Override
@@ -143,8 +144,8 @@ public class RenderSystem extends GameSystem implements ISubscriber {
             return entity.position;
         }else {
             return new Vec2(
-                    entity.position.x * WORLD_TO_SCREEN_SCALE_FACTOR - (camera.entity.position.x * WORLD_TO_SCREEN_SCALE_FACTOR - camera.viewport.width / 2f),
-                    entity.position.y * WORLD_TO_SCREEN_SCALE_FACTOR - (camera.entity.position.y * WORLD_TO_SCREEN_SCALE_FACTOR - camera.viewport.height / 2f)
+                    entity.position.x * physicsUnitOnScreenSize - (camera.entity.position.x * physicsUnitOnScreenSize - camera.viewport.width / 2f),
+                    entity.position.y * physicsUnitOnScreenSize - (camera.entity.position.y * physicsUnitOnScreenSize - camera.viewport.height / 2f)
             );
         }
     }

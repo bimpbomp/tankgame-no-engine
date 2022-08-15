@@ -33,9 +33,10 @@ public abstract class GameSystem {
     }
 
     public void entitySignatureChanged(Entity entity){
-        if (caresAboutEntity(entity))
-            addEntity(entity);
-        else
+        if (caresAboutEntity(entity)) {
+            if (!entities.contains(entity))
+                addEntity(entity);
+        } else
             removeEntity(entity);
     }
 
