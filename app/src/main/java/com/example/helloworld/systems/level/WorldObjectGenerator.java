@@ -2,9 +2,11 @@ package com.example.helloworld.systems.level;
 
 import android.graphics.Color;
 import android.util.Log;
+import com.example.helloworld.R;
 import com.example.helloworld.components.PhysicsComponent;
 import com.example.helloworld.components.TankInput;
 import com.example.helloworld.components.renderable.Renderable;
+import com.example.helloworld.components.renderable.RenderableType;
 import com.example.helloworld.core.CoordinateSystem;
 import com.example.helloworld.core.ecs.Coordinator;
 import com.example.helloworld.core.ecs.Entity;
@@ -30,13 +32,17 @@ public class WorldObjectGenerator {
         return entity;
     }
 
-    public static Entity generateTank(Coordinator coordinator, Vec2 position, int width, int height, int zOrder, int color){
+    public static Entity generateTank(Coordinator coordinator, Vec2 position, int width, int height, int zOrder){
         Entity entity = coordinator.createEntity();
         entity.position = position;
-        Renderable renderablePolygon = PolygonFactory.generateRectangle(width, height, CoordinateSystem.WORLD);
-        renderablePolygon.zOrder = zOrder;
-        renderablePolygon.color = color;
-        coordinator.addComponent(entity, renderablePolygon);
+
+        Renderable renderable = new Renderable();
+        renderable.zOrder = zOrder;
+        renderable.type = RenderableType.SPRITE;
+        renderable.sprite = LoadedAssets.getInstance().get(R.raw.body_tracks + "");
+
+        coordinator.addComponent(entity, renderable);
+
         PhysicsComponent physicsComponent = PhysicsBodyGenerator.createPhysicsBody(entity.position, true, width, height);
         coordinator.addComponent(entity, physicsComponent);
 

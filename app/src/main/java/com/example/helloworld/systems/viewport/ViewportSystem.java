@@ -19,7 +19,7 @@ public class ViewportSystem extends GameSystem {
 
     @Override
     public void update(float delta) {
-        Entity playerViewport = coordinator.getPlayerViewport();
+        Entity playerViewport = coordinator.getPlayerViewportEntity();
         playerViewport.position.set(coordinator.getPlayer().position);
     }
 }

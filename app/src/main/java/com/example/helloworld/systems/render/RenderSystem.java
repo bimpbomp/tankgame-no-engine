@@ -24,12 +24,11 @@ public class RenderSystem extends GameSystem implements ISubscriber {
     private final List<SortableRenderable> sortedEntities;
     private final Set<Entity> newEntities;
     private final GameSurface gameSurface;
-    private final Paint paint;
+    private Paint paint;
     private boolean entitiesAdded;
     private Canvas canvas;
     private Camera camera;
-    // zoom in/out
-    public static final int WORLD_TO_SCREEN_SCALE_FACTOR = 100;
+    public static int WORLD_TO_SCREEN_SCALE_FACTOR;
 
     public RenderSystem(Coordinator coordinator, GameSurface gameSurface) {
         super(coordinator);
@@ -40,6 +39,8 @@ public class RenderSystem extends GameSystem implements ISubscriber {
         this.gameSurface = gameSurface;
         this.paint = new Paint();
         this.entitiesAdded = false;
+
+        WORLD_TO_SCREEN_SCALE_FACTOR = gameSurface.getHeight() / 10;
     }
 
     @Override
@@ -127,11 +128,14 @@ public class RenderSystem extends GameSystem implements ISubscriber {
     }
 
     public void renderCircle(Vec2 screenCoordinates, Renderable renderableCircle){
-
+        paint.setColor(renderableCircle.color);
+        canvas.drawCircle(screenCoordinates.x, screenCoordinates.y, renderableCircle.radius, paint);
     }
 
     public void renderSprite(Vec2 screenCoordinates, Renderable renderableSprite){
-
+        paint = new Paint();
+        canvas.drawBitmap(renderableSprite.sprite.bitmap, screenCoordinates.x - renderableSprite.sprite.centerXOffset, screenCoordinates.y - renderableSprite.sprite.centerXOffset, paint);
+        paint.setARGB(125, 255, 255, 255);
     }
 
     private Vec2 convertToScreenCoordinates(Entity entity, Renderable renderable){

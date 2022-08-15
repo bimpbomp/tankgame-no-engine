@@ -1,5 +1,7 @@
 package com.example.helloworld.core.ecs;
 
+import com.example.helloworld.components.Viewport;
+
 public class Coordinator {
     private ComponentManager componentManager;
     private EntityManager entityManager;
@@ -51,8 +53,12 @@ public class Coordinator {
         systemManager.registerSystem(system);
     }
 
-    public Entity getPlayerViewport() {
+    public Entity getPlayerViewportEntity() {
         return playerViewport;
+    }
+
+    public Viewport getPlayerViewportComponent(){
+        return (Viewport) this.getComponent(playerViewport, Viewport.class);
     }
 
     public void setPlayerViewport(Entity playerViewport) {

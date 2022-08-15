@@ -8,6 +8,7 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 import com.example.helloworld.core.Loop;
 import com.example.helloworld.old.Point;
+import com.example.helloworld.systems.level.LoadedAssets;
 
 public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
     Context context;
@@ -22,6 +23,7 @@ public class GameSurface extends SurfaceView implements SurfaceHolder.Callback {
 
         this.context = context;
         this.inputSystem = new AndroidInputSystem();
+        LoadedAssets.setResources(getResources());
     }
 
     public void startLoopThread(){

@@ -122,7 +122,7 @@ public class UiSystem extends GameSystem implements ISubscriber {
 
     private void changeToLevelUi(){
         clearCurrentUi();
-        Entity playerViewportEntity = coordinator.getPlayerViewport();
+        Entity playerViewportEntity = coordinator.getPlayerViewportEntity();
         Viewport viewport = (Viewport) coordinator.getComponent(playerViewportEntity, Viewport.class);
         tankInput = (TankInput) coordinator.getComponent(coordinator.getPlayer(), TankInput.class);
 
